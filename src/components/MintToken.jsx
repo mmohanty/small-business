@@ -7,6 +7,9 @@ import axios from "axios";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
+
+import { darken, lighten, styled } from '@mui/material/styles';
+
 const MintToken = () => {
 
   const [rowData, setRowData] = useState();
@@ -83,6 +86,65 @@ const MintToken = () => {
     },
     [],
   );
+
+  const getBackgroundColor = (color, theme, coefficient) => ({
+    backgroundColor: darken(color, coefficient),
+    ...theme.applyStyles('light', {
+      backgroundColor: lighten(color, coefficient),
+    }),
+  });
+
+  const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+    '& .super-app-theme--Open': {
+      ...getBackgroundColor(theme.palette.info.main, theme, 0.7),
+      '&:hover': {
+        ...getBackgroundColor(theme.palette.info.main, theme, 0.6),
+      },
+      '&.Mui-selected': {
+        ...getBackgroundColor(theme.palette.info.main, theme, 0.5),
+        '&:hover': {
+          ...getBackgroundColor(theme.palette.info.main, theme, 0.4),
+        },
+      },
+    },
+    '& .super-app-theme--ACCEPT': {
+      ...getBackgroundColor(theme.palette.success.main, theme, 0.7),
+      '&:hover': {
+        ...getBackgroundColor(theme.palette.success.main, theme, 0.6),
+      },
+      '&.Mui-selected': {
+        ...getBackgroundColor(theme.palette.success.main, theme, 0.5),
+        '&:hover': {
+          ...getBackgroundColor(theme.palette.success.main, theme, 0.4),
+        },
+      },
+    },
+    '& .super-app-theme--PartiallyFilled': {
+      ...getBackgroundColor(theme.palette.warning.main, theme, 0.7),
+      '&:hover': {
+        ...getBackgroundColor(theme.palette.warning.main, theme, 0.6),
+      },
+      '&.Mui-selected': {
+        ...getBackgroundColor(theme.palette.warning.main, theme, 0.5),
+        '&:hover': {
+          ...getBackgroundColor(theme.palette.warning.main, theme, 0.4),
+        },
+      },
+    },
+    '& .super-app-theme--REJECT': {
+      ...getBackgroundColor(theme.palette.error.main, theme, 0.7),
+      '&:hover': {
+        ...getBackgroundColor(theme.palette.error.main, theme, 0.6),
+      },
+      '&.Mui-selected': {
+        ...getBackgroundColor(theme.palette.error.main, theme, 0.5),
+        '&:hover': {
+          ...getBackgroundColor(theme.palette.error.main, theme, 0.4),
+        },
+      },
+    },
+  }));
+
   const columns = [
     { field: 'loan_number', headerName: 'Loan Number', width: 120 },
     {
@@ -139,36 +201,55 @@ const MintToken = () => {
     }
   ];
 
-
-
-
   return (
-    <Box sx={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={rowData}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
-            },
-          },
-        }}
-        pageSizeOptions={[5]}
-        checkboxSelection
-        disableRowSelectionOnClick
-      />
+    <Box sx={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+    }}>
 
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert
-          onClose={handleClose}
-          severity={severity}
-          variant="filled"
-          sx={{ width: '100%' }}
-        >
-          {message}
-        </Alert>
-      </Snackbar>
+      <Box sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        textAlign: "center",
+        marginTop: '60px',
+        border: 3,
+        borderColor: "error.main",
+        display: "inline-block",
+
+      }}>
+
+      <Box component="h2">Loan Details</Box>
+        <Box sx={{ height: 400, width: '100%' }}>
+          <StyledDataGrid
+            rows={rowData}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 5,
+                },
+              },
+            }}
+            pageSizeOptions={[5]}
+            checkboxSelection
+            disableRowSelectionOnClick
+            getRowClassName={(params) => `super-app-theme--${params.row.loan_status}`}
+          />
+
+          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Alert
+              onClose={handleClose}
+              severity={severity}
+              variant="filled"
+              sx={{ width: '100%' }}
+            >
+              {message}
+            </Alert>
+          </Snackbar>
+        </Box>
+      </Box>
     </Box>
   );
 };
