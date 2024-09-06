@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, useGridApiRef } from '@mui/x-data-grid';
 import SecurityIcon from '@mui/icons-material/Security';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import axios from "axios";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
-
 import { darken, lighten, styled } from '@mui/material/styles';
+
+var rowGlobal = null;
+var apiRef = null;
 
 const MintToken = () => {
 
+  apiRef = useGridApiRef();
   const [rowData, setRowData] = useState();
 
   const [open, setOpen] = React.useState(false);
@@ -31,6 +34,10 @@ const MintToken = () => {
   };
 
   useEffect(() => {
+    fetchLoans();
+  }, []);
+
+  function fetchLoans() {
     axios.get('https://dummyjson.com/c/93d4-0dd2-43d1-b124').then(
       response => {
         var data = new Array();
@@ -41,18 +48,20 @@ const MintToken = () => {
         });
         console.log(data);
         setRowData(data);
+        rowGlobal = data;
       }
     ).catch(error => {
       console.error(error);
-    })
-  }, [])
+    });
+  }
+
 
 
   const mintToken = React.useCallback(
     (id) => () => {
       setTimeout(() => {
         //setRows((prevRows) => prevRows.filter((row) => row.id !== id));
-        var row = rowData.find((row) => row.id === id);
+        var row = rowGlobal.find((row) => row.id === id);
         console.log(row);
         const mintData = {
           loan_number: row.loan_number,
@@ -62,15 +71,24 @@ const MintToken = () => {
           { headers: { "Content-Type": "application/json" } }
         ).then((response) => {
           console.log(response.status, response.data.token);
+          setSeverity('success');
+          setMessage('Loan created successfully');
+          showSnackbar();
+          fetchLoans();
         }).catch((error) => {
+          setSeverity('error');
+          setMessage("Unknown error.");
           if (error.response) {
             console.log(error.response);
+            setMessage(error.response.data.message);
             console.log("server responded");
           } else if (error.request) {
+            setMessage("network error");
             console.log("network error");
           } else {
             console.log(error);
           }
+          showSnackbar();
         });
       });
     },
@@ -220,7 +238,7 @@ const MintToken = () => {
 
       }}>
 
-      <Box component="h2">Loan Details</Box>
+        <Box component="h2">Loan Details</Box>
         <Box sx={{ height: 400, width: '100%' }}>
           <StyledDataGrid
             rows={rowData}
@@ -236,6 +254,7 @@ const MintToken = () => {
             checkboxSelection
             disableRowSelectionOnClick
             getRowClassName={(params) => `super-app-theme--${params.row.loan_status}`}
+            apiRef={apiRef}
           />
 
           <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>

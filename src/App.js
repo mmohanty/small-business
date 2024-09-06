@@ -8,6 +8,7 @@ import About from './components/About';
 import Contact from './components/Contact';
 import Loan from './components/Loan';
 import MintToken from './components/MintToken';
+import LoanWareHousing from './components/LoanWareHousing';
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/loans" element={<Loan />} />
             <Route path="/mint" element={<MintToken/>} />
+            <Route path="/lwh" element={<LoanWareHousing/>} />
           </Routes>
         </main>
         <Footer />

@@ -62,6 +62,27 @@ const Home = () => {
           </CardContent>
         </Card>
       </Link>
+
+      <Link to="/lwh" style={{ "textDecorationLine": 'none' }}>
+        <Card sx={{ maxWidth: 345 }}>
+          <CardMedia
+            sx={{ height: 140 }}
+            image="/images/cards/asset-mgmt-scaled.webp"
+            title="Loan Warehousing"
+          />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              Asset Manager
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              Asset Manager manages Fund
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary', marginTop: '10px' }}>
+              Navigate to Loan Warehousing Screen
+            </Typography>
+          </CardContent>
+        </Card>
+      </Link>
     </Box>
 
 
