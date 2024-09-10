@@ -7,11 +7,14 @@ import CardMedia from '@mui/material/CardMedia';
 import { Link } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import { Box, CardActionArea } from '@mui/material';
+import Header from './Header';
 
 const Home = () => {
   return (
 
-    <Box sx={{
+    <div>
+       <Header />
+       <Box sx={{
       display: 'flex',
       flexWrap: 'wrap',
       justifyContent: 'center',
@@ -63,12 +66,12 @@ const Home = () => {
         </Card>
       </Link>
 
-      <Link to="/lwh" style={{ "textDecorationLine": 'none' }}>
+      <Link to="/am" style={{ "textDecorationLine": 'none' }}>
         <Card sx={{ maxWidth: 345 }}>
           <CardMedia
             sx={{ height: 140 }}
             image="/images/cards/asset-mgmt-scaled.webp"
-            title="Loan Warehousing"
+            title="Asset Manager"
           />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
@@ -78,12 +81,14 @@ const Home = () => {
               Asset Manager manages Fund
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary', marginTop: '10px' }}>
-              Navigate to Loan Warehousing Screen
+              Navigate to Asset Manager Screen
             </Typography>
           </CardContent>
         </Card>
       </Link>
     </Box>
+    </div>
+    
 
 
   );

@@ -9,12 +9,16 @@ import Contact from './components/Contact';
 import Loan from './components/Loan';
 import MintToken from './components/MintToken';
 import LoanWareHousing from './components/LoanWareHousing';
+import AssetManager from './components/AssetManager';
+import CreateTemplate from './components/CreateTemplate';
+import BulkUpload from './components/BulkUpload';
 
 const App = () => {
   return (
     <Router>
+      
       <div>
-        <Header />
+
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -23,6 +27,9 @@ const App = () => {
             <Route path="/loans" element={<Loan />} />
             <Route path="/mint" element={<MintToken/>} />
             <Route path="/lwh" element={<LoanWareHousing/>} />
+            <Route path="/am" element={<AssetManager/>} />
+            <Route path="/create-template" element={<CreateTemplate />} />
+            <Route path ="/bulk-upload" element={<BulkUpload />} />
           </Routes>
         </main>
         <Footer />
