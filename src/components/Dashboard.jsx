@@ -28,7 +28,7 @@ const Dashboard = () => {
         Overview
       </Typography>
       <Grid container spacing={4} justifyContent="center" alignItems="center">
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={6} md={3}>
           <OverviewCard
             title="Total Loans"
             value="200,913"
@@ -36,7 +36,7 @@ const Dashboard = () => {
             icon={<CheckCircleIcon />}
           />
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={6} md={3}>
           <OverviewCard
             title="Pending"
             value="1,290"
@@ -44,7 +44,7 @@ const Dashboard = () => {
             icon={<PendingActionsIcon />}
           />
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={6} md={3}>
           <OverviewCard
             title="Rejected"
             value="102"
@@ -52,7 +52,7 @@ const Dashboard = () => {
             icon={<CancelIcon />}
           />
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={6} md={3}>
           <OverviewCard
             title="Returned"
             value="102"
@@ -63,7 +63,7 @@ const Dashboard = () => {
       </Grid>
 
       <Grid container spacing={3} justifyContent="center" alignItems="center">
-        <Grid item xs={12} sm={8}>
+        <Grid xs={12} sm={6} md={3}>
           <BarChart />
         </Grid>
         <Grid item xs={12} sm={4}>

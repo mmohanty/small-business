@@ -6,7 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import Home from "./components/Home";
-import About from "./components/About";
+import About from "./components/Template";
 import Services from "./components/Services";
 import Contact from "./components/Contact";
 import Header from "./components/Header";
@@ -14,6 +14,8 @@ import DrawerMenu from "./components/DrawerMenu";
 import Footer from "./components/Footer";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
+import Template from "./components/Template";
+import LoanScreen from "./components/LoanScreen";
 
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -50,10 +52,10 @@ function App() {
               }
             />
             <Route
-              path="/about"
+              path="/template"
               element={
                 <PrivateRoute>
-                  <About />
+                  <Template />
                 </PrivateRoute>
               }
             />
@@ -79,6 +81,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/loan-screen"
+              element={
+                <PrivateRoute>
+                  <LoanScreen />
                 </PrivateRoute>
               }
             />

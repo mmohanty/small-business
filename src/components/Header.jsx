@@ -46,7 +46,8 @@ const Header = ({ toggleDrawer }) => {
                         textDecoration: 'none',
                     }}
                 >
-                    <img src="/images/logos/wf.webp" alt="logo" />
+                    {/* <img src="/images/logos/lw.svg" alt="LOAN WAREHOUSE" /> */}
+                    LOAN WAREHOUSE
                 </Typography>
 
                 {/* Right Menu Items */}

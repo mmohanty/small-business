@@ -9,7 +9,8 @@ const DrawerMenu = ({ isOpen, toggleDrawer }) => {
   const menuItemsForAggregator = [
     { text: 'Home', link: '/home' },
     { text: 'Dashboard', link: '/dashboard' },
-    { text: 'About', link: '/about' },
+    { text: 'LoanScreen', link: '/loan-screen' },
+    { text: 'Template', link: '/template' },
     { text: 'Services', link: '/services' },
     { text: 'Contact', link: '/contact' },
   ];
