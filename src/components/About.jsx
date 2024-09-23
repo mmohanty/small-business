@@ -1,7 +1,13 @@
 import React from 'react';
+import { Typography } from '@mui/material';
 
 const About = () => {
-  return <h2>About Us</h2>;
+  return (
+    <div>
+      <Typography variant="h4">About Us</Typography>
+      <Typography variant="body1">Learn more about us on this page.</Typography>
+    </div>
+  );
 };
 
 export default About;
