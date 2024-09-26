@@ -57,6 +57,8 @@ const DrawerMenu = ({ isOpen, toggleDrawer }) => {
           alignItems: 'center',
           height: 10,
           borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+          background: 'linear-gradient(45deg, #6A82FB 30%, #FC5C7D 90%)'
+
         }}
       >
         <Typography variant="h6">Asset Management</Typography>
@@ -77,7 +79,7 @@ const DrawerMenu = ({ isOpen, toggleDrawer }) => {
       <Box sx={{ p: 2, borderTop: '1px solid rgba(0, 0, 0, 0.12)' }}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Box display="flex" alignItems="center">
-            <Avatar src={localStorage.getItem("loggedInUser")} alt={localStorage.getItem("loggedInUser")} />
+            <Avatar src={'https://i.pravatar.cc/150?img=1'} alt={localStorage.getItem("loggedInUser")} />
             <Box ml={2}>
               <Typography variant="body1">{localStorage.getItem("loggedInUser")}</Typography>
               {/* User Role Label */}
