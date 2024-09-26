@@ -54,7 +54,13 @@ const Template = () => {
   };
 
   return (
-    <Box sx={{ padding: 2 }}>
+    <Box
+      sx={{
+        padding: { xs: 2, sm: 3, md: 4 },
+        width: { xs: '100%', sm: '90%', md: '75%' }, // Adjust width for different screen sizes
+        margin: '0 auto', // Center the content on the page
+      }}
+    >
       {/* Collapsible Panel for Template Name */}
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -67,6 +73,11 @@ const Template = () => {
             fullWidth
             value={templateName}
             onChange={(e) => setTemplateName(e.target.value)}
+            sx={{
+              '& .MuiInputBase-input': {
+                height: '40px',
+              },
+            }}
           />
         </AccordionDetails>
       </Accordion>
@@ -77,7 +88,7 @@ const Template = () => {
           <Typography variant="h6">Fields</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
+          <TableContainer component={Paper} sx={{ maxHeight: 400, overflowX: 'auto' }}>
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
@@ -104,6 +115,11 @@ const Template = () => {
                         onChange={(event) => handleInputChange(index, event)}
                         variant="outlined"
                         fullWidth
+                        sx={{
+                          '& .MuiInputBase-input': {
+                            height: '40px',
+                          },
+                        }}
                       />
                     </TableCell>
                     <TableCell>
@@ -112,6 +128,12 @@ const Template = () => {
                         value={row.dataType}
                         onChange={(event) => handleInputChange(index, event)}
                         fullWidth
+                        sx={{
+                          height: '40px',
+                          '& .MuiSelect-select': {
+                            padding: '10px',
+                          },
+                        }}
                       >
                         {dataTypes.map((type, idx) => (
                           <MenuItem key={idx} value={type}>
@@ -148,6 +170,11 @@ const Template = () => {
                         onChange={(event) => handleInputChange(index, event)}
                         variant="outlined"
                         fullWidth
+                        sx={{
+                          '& .MuiInputBase-input': {
+                            height: '40px',
+                          },
+                        }}
                       />
                     </TableCell>
                     <TableCell>
@@ -157,6 +184,11 @@ const Template = () => {
                         onChange={(event) => handleInputChange(index, event)}
                         variant="outlined"
                         fullWidth
+                        sx={{
+                          '& .MuiInputBase-input': {
+                            height: '40px',
+                          },
+                        }}
                       />
                     </TableCell>
                     <TableCell>
@@ -166,6 +198,11 @@ const Template = () => {
                         onChange={(event) => handleInputChange(index, event)}
                         variant="outlined"
                         fullWidth
+                        sx={{
+                          '& .MuiInputBase-input': {
+                            height: '40px',
+                          },
+                        }}
                       />
                     </TableCell>
                     <TableCell>
@@ -181,11 +218,19 @@ const Template = () => {
         </AccordionDetails>
       </Accordion>
 
-      <Box sx={{ marginTop: 2, display: 'flex', justifyContent: 'space-between' }}>
-        <Button variant="contained" color="primary" onClick={handleAddRow}>
+      <Box
+        sx={{
+          marginTop: 2,
+          display: 'flex',
+          justifyContent: { xs: 'center', sm: 'space-between' },
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: { xs: 2, sm: 0 },
+        }}
+      >
+        <Button variant="contained" color="primary" onClick={handleAddRow} sx={{ width: { xs: '100%', sm: 'auto' } }}>
           Add Row
         </Button>
-        <Button variant="contained" color="error" onClick={handleDeleteLastRow}>
+        <Button variant="contained" color="error" onClick={handleDeleteLastRow} sx={{ width: { xs: '100%', sm: 'auto' } }}>
           Delete Last Row
         </Button>
       </Box>
