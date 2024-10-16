@@ -1,14 +1,14 @@
-import React from 'react';
-import { Avatar, Box, Drawer, List, ListItem, ListItemText, Menu, Typography, IconButton, MenuItem, Divider } from '@mui/material';
+import React, { useState } from 'react';
+import { Avatar, Box, Drawer, List, ListItem, ListItemText, ListItemIcon, Menu, Typography, IconButton, MenuItem } from '@mui/material';
 import { Link } from 'react-router-dom';
-import MenuContext from './MenuContext';
-import { Home, Settings, AccountCircle, MoreVert as MoreVertIcon } from '@mui/icons-material';
+import { Home, Dashboard, ListAlt, Assignment, Business, ContactMail, AccountCircle, Settings, MoreVert as MoreVertIcon, ChevronLeft, ChevronRight, ContactSupport } from '@mui/icons-material';
+import VerifiedIcon from '@mui/icons-material/Verified';
+const DrawerMenu = () => {
+  const [isOpen, setIsOpen] = useState(false); // Control the drawer's open state
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedItem, setSelectedItem] = useState('Home'); // Track selected item
 
-const DrawerMenu = ({ isOpen, toggleDrawer }) => {
-
-  const loggedInUser = React.useContext(MenuContext);
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const userRole = localStorage.getItem("loggedInUser");
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -20,82 +20,136 @@ const DrawerMenu = ({ isOpen, toggleDrawer }) => {
 
   const openMenu = Boolean(anchorEl);
 
+  const toggleDrawer = () => {
+    setIsOpen(!isOpen); // Toggle drawer open/close
+  };
+
+  const handleListItemClick = (text) => {
+    setSelectedItem(text);
+  };
 
   const menuItemsForAggregator = [
-    { text: 'Home', link: '/home' },
-    { text: 'Dashboard', link: '/dashboard' },
-    { text: 'LoanScreen', link: '/loan-screen' },
-    { text: 'Template', link: '/template' },
-    { text: 'Services', link: '/services' },
-    { text: 'Contact', link: '/contact' },
+    { text: 'Home', link: '/home', icon: <Home /> },
+    { text: 'Dashboard', link: '/dashboard', icon: <Dashboard /> },
+    { text: 'Approve Template', link: '/approve-template', icon: <VerifiedIcon /> },
+    { text: 'Template', link: '/template', icon: <Assignment /> },
+    { text: 'Services', link: '/services', icon: <Business /> },
+    { text: 'Contact', link: '/contact', icon: <ContactMail /> },
+    { text: 'Loan Details', link: '/loan-details', icon: <ListAlt /> },
   ];
 
   const menuItemsForCustodian = [
-    { text: 'Home', link: '/home' },
-    { text: 'Dashboard', link: '/dashboard' },
-    { text: 'About', link: '/about' },
-    { text: 'Services', link: '/services' },
+    { text: 'Home', link: '/home', icon: <Home /> },
+    { text: 'Dashboard', link: '/dashboard', icon: <Dashboard /> },
+    { text: 'About', link: '/about', icon: <ContactSupport /> },
+    { text: 'Services', link: '/services', icon: <Business /> },
   ];
 
   return (
-    <Drawer anchor="left" open={isOpen} onClose={toggleDrawer(false)}
-    sx={{
-      '& .MuiDrawer-paper': {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-      },
-    }}>
+    <Drawer
+      variant="permanent"
+      open={isOpen}
+      sx={{
+        width: isOpen ? 240 : 60,
+        '& .MuiDrawer-paper': {
+          width: isOpen ? 240 : 60,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          transition: 'width 0.3s',
+        },
+      }}
+    >
+      {/* Drawer Toggle Arrow Icon */}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: isOpen ? 'flex-end' : 'center',
+          p: 1,
+        }}
+      >
+        <IconButton onClick={toggleDrawer}>
+          {isOpen ? <ChevronLeft /> : <ChevronRight />}
+        </IconButton>
+      </Box>
 
-       {/* Company Logo at the top */}
-       <Box
+      {/* Company Logo */}
+      {/* <Box
         sx={{
           p: 5,
-          marginTop: 1,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           height: 10,
           borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-          background: 'linear-gradient(45deg, #6A82FB 30%, #FC5C7D 90%)'
-
+          background: 'linear-gradient(45deg, #6A82FB 30%, #FC5C7D 90%)',
         }}
       >
-        <Typography variant="h6">Asset Management</Typography>
-      </Box>
+        {isOpen && <Typography variant="h6">Asset Management</Typography>}
+      </Box> */}
 
-       {/* List of items */}
-      <Box sx={{ width: 250, flexGrow: 1 }} role="presentation" onClick={toggleDrawer(false)}>
+      {/* List of menu items */}
+      <Box sx={{ flexGrow: 1 }} role="presentation">
         <List>
-          {(localStorage.getItem("loggedInUser") === 'AssetManager' ? menuItemsForAggregator : menuItemsForCustodian).map((item, index) => (
-            <ListItem button key={item.text} component={Link} to={item.link}>
-              <ListItemText primary={item.text} />
+          {(userRole === 'AssetManager' ? menuItemsForAggregator : menuItemsForCustodian).map((item) => (
+            <ListItem
+              button
+              key={item.text}
+              component={Link}
+              to={item.link}
+              selected={selectedItem === item.text}
+              onClick={() => handleListItemClick(item.text)}
+              sx={{
+                '&.Mui-selected': {
+                  backgroundColor: '#E3F2FD', // Light blue background for better contrast
+                  color: '#000', // Black text for contrast
+                  '&:hover': {
+                    backgroundColor: '#BBDEFB', // Slightly darker on hover
+                  },
+                },
+                '&:hover': {
+                  backgroundColor: '#F1F1F1', // General hover effect
+                },
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  color: selectedItem === item.text ? '#000' : 'inherit',
+                  minWidth: isOpen ? 'auto' : '45px',
+                  justifyContent: 'center',
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              {isOpen && <ListItemText primary={item.text} />}
             </ListItem>
           ))}
         </List>
       </Box>
 
-      {/* User Avatar and Name with Menu at the bottom */}
+      {/* User Avatar and Menu */}
       <Box sx={{ p: 2, borderTop: '1px solid rgba(0, 0, 0, 0.12)' }}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Box display="flex" alignItems="center">
-            <Avatar src={'https://i.pravatar.cc/150?img=1'} alt={localStorage.getItem("loggedInUser")} />
-            <Box ml={2}>
-              <Typography variant="body1">{localStorage.getItem("loggedInUser")}</Typography>
-              {/* User Role Label */}
-              <Typography variant="body2" color="textSecondary" sx={{ fontSize: '0.75rem' }}>
-                {localStorage.getItem("loggedInUser")} {/* Smaller font size for role */}
-              </Typography>
-            </Box>
+            <Avatar src={'https://i.pravatar.cc/150?img=1'} alt={userRole} />
+            {isOpen && (
+              <Box ml={2}>
+                <Typography variant="body1">{userRole}</Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ fontSize: '0.75rem' }}>
+                  {userRole}
+                </Typography>
+              </Box>
+            )}
           </Box>
 
-          {/* Three Dots Icon to open menu */}
-          <IconButton onClick={handleMenuClick}>
-            <MoreVertIcon />
-          </IconButton>
+          {isOpen && (
+            <IconButton onClick={handleMenuClick}>
+              <MoreVertIcon />
+            </IconButton>
+          )}
         </Box>
 
-        {/* Menu for Profile, Accounts, Settings */}
+        {/* Profile, Accounts, and Settings menu */}
         <Menu
           anchorEl={anchorEl}
           open={openMenu}

@@ -1,0 +1,45 @@
+.view-files-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .search-bar {
+    margin-bottom: 20px;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .segments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+  }
+  
+  .segment-card {
+    background: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .segment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .segment-toggle {
+    cursor: pointer;
+  }
+  
+  .segment-card p {
+    margin: 10px 0 0;
+    font-size: 14px;
+    color: #555;
+  }
+  

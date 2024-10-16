@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -27,22 +27,26 @@ const Template = () => {
     { fieldName: '', dataType: 'String', isRequired: false, isUnique: false, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
   ]);
   const [templateName, setTemplateName] = useState('');
+  const lastRowFieldRef = useRef(null); // Ref for the last row's field name input
 
   const dataTypes = ['String', 'Integer', 'Float', 'Date'];
 
   const handleAddRow = () => {
-    setRows([...rows, { fieldName: '', dataType: 'String', isRequired: false, isUnique: false, isEditable: false, minValue: '', maxValue: '', dataFormat: '' }]);
+    setRows((prevRows) => [
+      ...prevRows,
+      { fieldName: '', dataType: 'String', isRequired: false, isUnique: false, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
+    ]);
   };
+
+  useEffect(() => {
+    if (lastRowFieldRef.current) {
+      lastRowFieldRef.current.focus(); // Set focus to the last added row's TextField
+    }
+  }, [rows]);
 
   const handleDeleteRow = (index) => {
     const updatedRows = [...rows];
     updatedRows.splice(index, 1);
-    setRows(updatedRows);
-  };
-
-  const handleDeleteLastRow = () => {
-    const updatedRows = [...rows];
-    updatedRows.pop();
     setRows(updatedRows);
   };
 
@@ -53,12 +57,22 @@ const Template = () => {
     setRows(updatedRows);
   };
 
+  const handleSave = () => {
+    console.log('Template saved', { templateName, rows });
+    // Add your logic to save the template (e.g., saving to local storage or a draft state)
+  };
+
+  const handleSubmit = () => {
+    console.log('Template submitted', { templateName, rows });
+    // Add your logic to submit the template (e.g., submitting to an API)
+  };
+
   return (
     <Box
       sx={{
         padding: { xs: 2, sm: 3, md: 4 },
-        width: { xs: '100%', sm: '90%', md: '75%' }, // Adjust width for different screen sizes
-        margin: '0 auto', // Center the content on the page
+        width: { xs: '100%', sm: '90%', md: '75%' },
+        margin: '0 auto',
       }}
     >
       {/* Collapsible Panel for Template Name */}
@@ -73,11 +87,7 @@ const Template = () => {
             fullWidth
             value={templateName}
             onChange={(e) => setTemplateName(e.target.value)}
-            sx={{
-              '& .MuiInputBase-input': {
-                height: '40px',
-              },
-            }}
+            size="small"
           />
         </AccordionDetails>
       </Accordion>
@@ -88,46 +98,43 @@ const Template = () => {
           <Typography variant="h6">Fields</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <TableContainer component={Paper} sx={{ maxHeight: 400, overflowX: 'auto' }}>
+          <TableContainer component={Paper} sx={{ maxHeight: '60vh', overflowX: 'auto' }}>
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
-                  <TableCell>#</TableCell>
-                  <TableCell>Field Name</TableCell>
-                  <TableCell>Data Type</TableCell>
-                  <TableCell>Is Required</TableCell>
-                  <TableCell>Is Unique</TableCell>
-                  <TableCell>Is Editable</TableCell>
-                  <TableCell>Min Value/Length</TableCell>
-                  <TableCell>Max Value/Length</TableCell>
-                  <TableCell>Data Format</TableCell>
-                  <TableCell>Remove</TableCell>
+                  <TableCell sx={{ padding: '8px' }}>#</TableCell>
+                  <TableCell sx={{ padding: '8px' }}>Field Name</TableCell>
+                  <TableCell sx={{ padding: '8px' }}>Data Type</TableCell>
+                  <TableCell sx={{ padding: '8px' }}>Is Required</TableCell>
+                  <TableCell sx={{ padding: '8px' }}>Is Editable</TableCell>
+                  <TableCell sx={{ padding: '8px' }}>Min Value/Length</TableCell>
+                  <TableCell sx={{ padding: '8px' }}>Max Value/Length</TableCell>
+                  <TableCell sx={{ padding: '8px' }}>Data Format</TableCell>
+                  <TableCell sx={{ padding: '8px' }}>Remove</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {rows.map((row, index) => (
                   <TableRow key={index}>
-                    <TableCell>{index}</TableCell>
-                    <TableCell>
+                    <TableCell sx={{ padding: '8px' }}>{index + 1}</TableCell>
+                    <TableCell sx={{ padding: '8px' }}>
                       <TextField
                         name="fieldName"
                         value={row.fieldName}
                         onChange={(event) => handleInputChange(index, event)}
                         variant="outlined"
                         fullWidth
-                        sx={{
-                          '& .MuiInputBase-input': {
-                            height: '40px',
-                          },
-                        }}
+                        size="small"
+                        inputRef={index === rows.length - 1 ? lastRowFieldRef : null} // Set ref for the last row
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{ padding: '8px' }}>
                       <Select
                         name="dataType"
                         value={row.dataType}
                         onChange={(event) => handleInputChange(index, event)}
                         fullWidth
+                        size="small"
                         sx={{
                           height: '40px',
                           '& .MuiSelect-select': {
@@ -142,70 +149,51 @@ const Template = () => {
                         ))}
                       </Select>
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{ padding: '8px' }}>
                       <Checkbox
                         name="isRequired"
                         checked={row.isRequired}
                         onChange={(event) => handleInputChange(index, event)}
                       />
                     </TableCell>
-                    <TableCell>
-                      <Checkbox
-                        name="isUnique"
-                        checked={row.isUnique}
-                        onChange={(event) => handleInputChange(index, event)}
-                      />
-                    </TableCell>
-                    <TableCell>
+                    <TableCell sx={{ padding: '8px' }}>
                       <Checkbox
                         name="isEditable"
                         checked={row.isEditable}
                         onChange={(event) => handleInputChange(index, event)}
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{ padding: '8px' }}>
                       <TextField
                         name="minValue"
                         value={row.minValue}
                         onChange={(event) => handleInputChange(index, event)}
                         variant="outlined"
                         fullWidth
-                        sx={{
-                          '& .MuiInputBase-input': {
-                            height: '40px',
-                          },
-                        }}
+                        size="small"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{ padding: '8px' }}>
                       <TextField
                         name="maxValue"
                         value={row.maxValue}
                         onChange={(event) => handleInputChange(index, event)}
                         variant="outlined"
                         fullWidth
-                        sx={{
-                          '& .MuiInputBase-input': {
-                            height: '40px',
-                          },
-                        }}
+                        size="small"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{ padding: '8px' }}>
                       <TextField
                         name="dataFormat"
                         value={row.dataFormat}
                         onChange={(event) => handleInputChange(index, event)}
                         variant="outlined"
                         fullWidth
-                        sx={{
-                          '& .MuiInputBase-input': {
-                            height: '40px',
-                          },
-                        }}
+                        size="small"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{ padding: '8px' }}>
                       <IconButton onClick={() => handleDeleteRow(index)} color="error">
                         <DeleteIcon />
                       </IconButton>
@@ -230,9 +218,15 @@ const Template = () => {
         <Button variant="contained" color="primary" onClick={handleAddRow} sx={{ width: { xs: '100%', sm: 'auto' } }}>
           Add Row
         </Button>
-        <Button variant="contained" color="error" onClick={handleDeleteLastRow} sx={{ width: { xs: '100%', sm: 'auto' } }}>
-          Delete Last Row
-        </Button>
+        {/* Save and Submit buttons */}
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button variant="contained" color="secondary" onClick={handleSave} sx={{ width: { xs: '100%', sm: 'auto' } }}>
+            Save
+          </Button>
+          <Button variant="contained" color="success" onClick={handleSubmit} sx={{ width: { xs: '100%', sm: 'auto' } }}>
+            Submit
+          </Button>
+        </Box>
       </Box>
     </Box>
   );

@@ -6,10 +6,7 @@ import {
     GridToolbarExport, GridToolbarFilterButton
 } from '@mui/x-data-grid';
 import {
-    randomCreatedDate,
-    randomTraderName,
     randomId,
-    randomArrayItem,
 } from '@mui/x-data-grid-generator';
 
 const Contact = () => {
@@ -56,7 +53,7 @@ const Contact = () => {
             description: 'This column has a value getter and is not sortable.',
             sortable: false,
             width: 160,
-            valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
+            valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`, // Correct valueGetter
         },
     ];
 
@@ -94,7 +91,14 @@ const Contact = () => {
                 <Button variant="contained" color="primary" sx={{ marginRight: 1 }} onClick={handleAddClick}>
                     Add Row
                 </Button>
-                <Button variant="contained" color="secondary" sx={{ marginRight: 1 }}>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    sx={{ marginRight: 1 }}
+                    onClick={() => {
+                        document.querySelector('[data-testid="Export CSV"]').click();
+                    }}
+                >
                     Export Data
                 </Button>
                 <Button variant="outlined" color="info">
@@ -119,8 +123,15 @@ const Contact = () => {
                 </Typography>
             </Box>
 
-            <Box sx={{ height: "70vh", width: '100%', border: "1px solid black" }}>
-
+            <Box
+                sx={{
+                    height: { xs: '60vh', sm: '70vh', md: '80vh' }, // Responsive height
+                    width: { xs: '95%', sm: '95%', md: '95%' },
+                    border: "1px solid black",
+                    marginLeft: { xs: '25px', sm: '35px', md: '70px' }, // Shifting the container slightly to the right
+                    marginTop: '20px', // Space from the top
+                }}
+            >
                 <DataGrid
                     rows={rows}
                     columns={columns}
@@ -129,7 +140,7 @@ const Contact = () => {
                     }}
                     slotProps={{
                         toolbar: { setRows, setRowModesModel },
-                      }}
+                    }}
                     initialState={{
                         pagination: {
                             paginationModel: {
@@ -143,7 +154,6 @@ const Contact = () => {
                 />
             </Box>
         </Box>
-
     );
 };
 
