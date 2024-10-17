@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Avatar, Box, Drawer, List, ListItem, ListItemText, ListItemIcon, Menu, Typography, IconButton, MenuItem } from '@mui/material';
+import { Avatar, Box, Drawer, List, ListItem, ListItemText, ListItemIcon, Menu, Typography, IconButton, MenuItem, Tooltip } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { Home, Dashboard, ListAlt, Assignment, Business, ContactMail, AccountCircle, Settings, MoreVert as MoreVertIcon, ChevronLeft, ChevronRight, ContactSupport } from '@mui/icons-material';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import FactCheckIcon from '@mui/icons-material/FactCheck';
+
 const DrawerMenu = () => {
   const [isOpen, setIsOpen] = useState(false); // Control the drawer's open state
   const [anchorEl, setAnchorEl] = useState(null);
@@ -35,8 +36,6 @@ const DrawerMenu = () => {
     { text: 'Create Template', link: '/createTemplates', icon: <Assignment /> },
     { text: 'Approve Template', link: '/approveTemplates', icon: <VerifiedIcon /> },
     { text: 'Manage Loans', link: '/manageLoans', icon: <ListAlt /> },
-    //{ text: 'Approve Loans', link: '/approveLoans', icon: <FactCheckIcon /> },
-
     { text: 'Services', link: '/services', icon: <Business /> },
   ];
 
@@ -75,56 +74,42 @@ const DrawerMenu = () => {
         </IconButton>
       </Box>
 
-      {/* Company Logo */}
-      {/* <Box
-        sx={{
-          p: 5,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 10,
-          borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-          background: 'linear-gradient(45deg, #6A82FB 30%, #FC5C7D 90%)',
-        }}
-      >
-        {isOpen && <Typography variant="h6">Asset Management</Typography>}
-      </Box> */}
-
       {/* List of menu items */}
       <Box sx={{ flexGrow: 1 }} role="presentation">
         <List>
           {(userRole === 'AssetManager' ? menuItemsForAggregator : menuItemsForCustodian).map((item) => (
-            <ListItem
-              //button
-              key={item.text}
-              component={Link}
-              to={item.link}
-              selected={selectedItem === item.text}
-              onClick={() => handleListItemClick(item.text)}
-              sx={{
-                '&.Mui-selected': {
-                  backgroundColor: '#E3F2FD', // Light blue background for better contrast
-                  color: '#000', // Black text for contrast
-                  '&:hover': {
-                    backgroundColor: '#BBDEFB', // Slightly darker on hover
-                  },
-                },
-                '&:hover': {
-                  backgroundColor: '#F1F1F1', // General hover effect
-                },
-              }}
-            >
-              <ListItemIcon
+            <Tooltip key={item.text} title={item.text} placement="right" arrow>
+              <ListItem
+                key={item.text}
+                component={Link}
+                to={item.link}
+                selected={selectedItem === item.text}
+                onClick={() => handleListItemClick(item.text)}
                 sx={{
-                  color: selectedItem === item.text ? '#000' : 'inherit',
-                  minWidth: isOpen ? 'auto' : '45px',
-                  justifyContent: 'center',
+                  '&.Mui-selected': {
+                    backgroundColor: '#E3F2FD', // Light blue background for better contrast
+                    color: '#000', // Black text for contrast
+                    '&:hover': {
+                      backgroundColor: '#BBDEFB', // Slightly darker on hover
+                    },
+                  },
+                  '&:hover': {
+                    backgroundColor: '#F1F1F1', // General hover effect
+                  },
                 }}
               >
-                {item.icon}
-              </ListItemIcon>
-              {isOpen && <ListItemText primary={item.text} />}
-            </ListItem>
+                <ListItemIcon
+                  sx={{
+                    color: selectedItem === item.text ? '#000' : 'inherit',
+                    minWidth: isOpen ? 'auto' : '45px',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {item.icon}
+                </ListItemIcon>
+                {isOpen && <ListItemText primary={item.text} />}
+              </ListItem>
+            </Tooltip>
           ))}
         </List>
       </Box>

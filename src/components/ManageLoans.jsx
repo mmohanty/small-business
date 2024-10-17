@@ -13,6 +13,7 @@ import SearchIcon from '@mui/icons-material/Search'; // Import search icon
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'; // Import LocalizationProvider
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import ReviewFormModal from './ReviewFormModal';
 
 // Assuming the drawer is 240px wide when open
 const drawerWidth = 240;
@@ -34,6 +35,72 @@ const templates = [
   { id: 3, templateName: "Template 3", status: "Pending" }
 ];
 
+// Data
+const fields = [
+  {
+    label: 'Enter Text',
+    type: 'text',
+    value: '',
+    fieldName: 'textValue',
+  },
+  {
+    label: 'Select Date',
+    type: 'date',
+    value: null,
+    fieldName: 'dateValue',
+  },
+  {
+    label: 'Enter Amount',
+    type: 'text',
+    value: '',
+    fieldName: 'currencyValue',
+  },
+  {
+    label: 'Additional Field',
+    type: 'text',
+    value: '',
+    fieldName: 'additionalField',
+  },
+];
+
+const notesHistory = [
+  {
+    date: 'Apr 27',
+    avatar: 'path_to_avatar_1.png',
+    user: 'CUser 1',
+    task: 'Prepare questionnaire',
+    time: '11:43 am',
+  },
+  {
+    date: 'Apr 27',
+    avatar: 'path_to_avatar_2.png',
+    user: 'CUser 2',
+    task: 'Heuristic evaluation',
+    time: '11:43 am',
+  },
+  {
+    date: 'Apr 27',
+    avatar: 'path_to_avatar_3.png',
+    user: 'CUser 3',
+    task: 'Create Wireframes',
+    time: '9:20 am',
+  },
+  {
+    date: 'Apr 24',
+    avatar: 'path_to_avatar_4.png',
+    user: 'AUser 4',
+    task: 'Design a database',
+    time: '5:31 pm',
+  },
+  {
+    date: 'Apr 24',
+    avatar: 'path_to_avatar_5.png',
+    user: 'AUser 4',
+    task: 'Home page design',
+    time: '12:03 pm',
+  },
+];
+
 // Slide transition for opening the modal
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -50,10 +117,33 @@ const ManageLoans = ({ isDrawerOpen }) => {
 
   const [flagStatus, setFlagStatus] = useState(''); // State to track selected flag status
 
+
+  const handleReset = () => {
+    console.log('Form Reset');
+  };
+  
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleModalSubmit = () => {
+    console.log('Form Submitted');
+    handleCloseModal(); // Optionally close the modal on submit
+  };
+
+  const handleModalCancel = () => {
+    console.log('Form Canceled');
+    handleCloseModal(); // Optionally close the modal on cancel
+  };
+  
   const handleFlagChange = (event) => {
     setFlagStatus(event.target.value);
   };
-  
+
   const handleLoanClick = (template) => {
     setSelectedTemplate(template);
   };
@@ -371,37 +461,18 @@ const ManageLoans = ({ isDrawerOpen }) => {
           )}
         </Paper>
 
-        {/* Full-Screen Modal to show loan attributes dynamically */}
-        <Dialog
-          fullScreen
-          open={modalOpen}
-          onClose={handleModalClose}
-          TransitionComponent={Transition}
-        >
-          <AppBar sx={{ position: 'relative' }}>
-            <Toolbar>
-              <Typography sx={{ flex: 1 }} variant="h6" component="div">
-                Loan Attributes
-              </Typography>
-              <IconButton edge="end" color="inherit" onClick={handleModalClose} aria-label="close">
-                <CloseIcon />
-              </IconButton>
-            </Toolbar>
-          </AppBar>
-          <Box sx={{ padding: 3 }}>
-            {selectedRow ? (
-              <Box>
-                {/* Render fields dynamically based on the dataType */}
-                {templateData.map((field) => (
-                  renderField(field)
-                ))}
-              </Box>
-            ) : (
-              <Typography>No loan selected</Typography>
-            )}
-          </Box>
-        </Dialog>
+        
       </Box>
+
+      <ReviewFormModal
+        open={modalOpen}
+        onClose={handleCloseModal}
+        jsonFields={fields}
+        notesHistory={notesHistory}
+        onSubmit={handleModalSubmit}
+        onReset={handleReset}
+        onCancel={handleModalCancel}
+      />
     </LocalizationProvider>
   );
 };
