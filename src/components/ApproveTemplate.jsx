@@ -119,7 +119,7 @@ const ApproveTemplate = ({ isDrawerOpen }) => {
         <List>
           {templates.map((template) => (
             <ListItem
-              button
+              //button
               key={template.id}
               onClick={() => handleLoanClick(template)}
               selected={selectedTemplate?.id === template.id}

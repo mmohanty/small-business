@@ -3,6 +3,7 @@ import { Avatar, Box, Drawer, List, ListItem, ListItemText, ListItemIcon, Menu, 
 import { Link } from 'react-router-dom';
 import { Home, Dashboard, ListAlt, Assignment, Business, ContactMail, AccountCircle, Settings, MoreVert as MoreVertIcon, ChevronLeft, ChevronRight, ContactSupport } from '@mui/icons-material';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import FactCheckIcon from '@mui/icons-material/FactCheck';
 const DrawerMenu = () => {
   const [isOpen, setIsOpen] = useState(false); // Control the drawer's open state
   const [anchorEl, setAnchorEl] = useState(null);
@@ -31,11 +32,12 @@ const DrawerMenu = () => {
   const menuItemsForAggregator = [
     { text: 'Home', link: '/home', icon: <Home /> },
     { text: 'Dashboard', link: '/dashboard', icon: <Dashboard /> },
-    { text: 'Approve Template', link: '/approve-template', icon: <VerifiedIcon /> },
-    { text: 'Template', link: '/template', icon: <Assignment /> },
+    { text: 'Create Template', link: '/createTemplates', icon: <Assignment /> },
+    { text: 'Approve Template', link: '/approveTemplates', icon: <VerifiedIcon /> },
+    { text: 'Manage Loans', link: '/manageLoans', icon: <ListAlt /> },
+    //{ text: 'Approve Loans', link: '/approveLoans', icon: <FactCheckIcon /> },
+
     { text: 'Services', link: '/services', icon: <Business /> },
-    { text: 'Contact', link: '/contact', icon: <ContactMail /> },
-    { text: 'Loan Details', link: '/loan-details', icon: <ListAlt /> },
   ];
 
   const menuItemsForCustodian = [
@@ -93,7 +95,7 @@ const DrawerMenu = () => {
         <List>
           {(userRole === 'AssetManager' ? menuItemsForAggregator : menuItemsForCustodian).map((item) => (
             <ListItem
-              button
+              //button
               key={item.text}
               component={Link}
               to={item.link}

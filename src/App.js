@@ -7,15 +7,14 @@ import {
 } from "react-router-dom";
 import Home from "./components/Home";
 import Services from "./components/Services";
-import Contact from "./components/Contact";
 import Header from "./components/Header";
 import DrawerMenu from "./components/DrawerMenu";
 import Footer from "./components/Footer";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import Template from "./components/Template";
-import LoanDetails from "./components/Aggregator";
 import ApproveTemplate from "./components/ApproveTemplate";
+import ManageLoans from "./components/ManageLoans";
 
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -52,21 +51,21 @@ function App() {
               }
             />
             <Route
-              path="/template"
+              path="/createTemplates"
               element={
                 <PrivateRoute>
                   <Template />
                 </PrivateRoute>
               }
             />
-            <Route
-              path="/contact"
+            {/* <Route
+              path="/approveLoans"
               element={
                 <PrivateRoute>
-                  <Contact />
+                  <ApproveLoans />
                 </PrivateRoute>
               }
-            />
+            /> */}
 
             <Route
               path="/services"
@@ -85,7 +84,7 @@ function App() {
               }
             />
             <Route
-              path="/approve-template"
+              path="/approveTemplates"
               element={
                 <PrivateRoute>
                   <ApproveTemplate />
@@ -93,10 +92,10 @@ function App() {
               }
             />
             <Route
-              path="/loan-details"
+              path="/manageLoans"
               element={
                 <PrivateRoute>
-                  <LoanDetails />
+                  <ManageLoans />
                 </PrivateRoute>
               }
             />
