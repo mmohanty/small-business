@@ -29,6 +29,19 @@ const templateData = [
   { id: 8, fieldName: 'DOB', dataType: 'Date', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
 ];
 
+
+const gridData = [
+  { id: 1, fieldName: 'LoanNumber', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
+  { id: 2, fieldName: 'SellerLoanNumber', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
+  { id: 3, fieldName: 'Borrower1FirstName', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
+  { id: 4, fieldName: 'Borrower1LastName', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
+  { id: 5, fieldName: 'Borrower2FirstName', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
+  { id: 6, fieldName: 'Borrower2LastName', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
+  { id: 7, fieldName: 'HaveLoan', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
+  { id: 8, fieldName: 'DOB', dataType: 'Date', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
+];
+
+
 const templates = [
   { id: 1, templateName: "Template1", status: "Approved" },
   { id: 2, templateName: "Template 2", status: "Pending" },
@@ -121,7 +134,7 @@ const ManageLoans = ({ isDrawerOpen }) => {
   const handleReset = () => {
     console.log('Form Reset');
   };
-  
+
   const handleOpenModal = () => {
     setModalOpen(true);
   };
@@ -155,6 +168,7 @@ const ManageLoans = ({ isDrawerOpen }) => {
 
   // Handle opening the modal with the selected loan details
   const handleViewClick = (row) => {
+    console.log(row);
     setSelectedRow(row);
     setModalOpen(true);
   };
@@ -239,104 +253,6 @@ const ManageLoans = ({ isDrawerOpen }) => {
       </GridToolbarContainer>
     );
   };
-
-  const renderField = (field) => {
-    return (
-      <Box
-        key={field.id}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          mb: 2,
-          width: '100%', // Make sure the entire row takes up full width
-        }}
-      >
-        {/* Main input field based on data type */}
-        {(() => {
-          switch (field.dataType) {
-            case 'String':
-              return (
-                <TextField
-                  label={field.fieldName}
-                  variant="outlined"
-                  value={selectedRow ? selectedRow[field.fieldName] : ''}
-                  sx={{ flex: 1, marginRight: 2, minWidth: 250 }}
-                  disabled={!field.isEditable}
-                />
-              );
-            case 'Float':
-            case 'Integer':
-              return (
-                <TextField
-                  label={field.fieldName}
-                  variant="outlined"
-                  value={selectedRow ? selectedRow[field.fieldName] : ''}
-                  type="number"
-                  sx={{ flex: 1, marginRight: 2, minWidth: 250 }}
-                  disabled={!field.isEditable}
-                  inputProps={{
-                    min: field.minValue,
-                    max: field.maxValue,
-                  }}
-                />
-              );
-            case 'Date':
-              return (
-                <Box sx={{ flex: 1, marginRight: 2, minWidth: 250 }}>
-                  <DatePicker
-                    label={field.fieldName}
-                    value={selectedRow ? selectedRow[field.fieldName] : null}
-                    onChange={() => { }} // Handle date change
-                    renderInput={(params) => (
-                      <TextField {...params} fullWidth variant="outlined" />
-                    )}
-                  />
-                </Box>
-              );
-            default:
-              return null;
-          }
-        })()}
-
-        {/* Reviewer Notes */}
-        {/* <TextField
-          label="Reviewer Notes"
-          variant="outlined"
-          fullWidth
-          sx={{ flex: 1, marginRight: 2, minWidth: 250 }}
-        /> */}
-
-        {/* Flag Icon */}
-        <IconButton color="warning" sx={{ marginLeft: 1 }}>
-          <FlagIcon />
-        </IconButton>
-        {/* Comments */}
-        <TextField
-          label="Comments"
-          variant="outlined"
-          fullWidth
-          sx={{ flex: 1, minWidth: 250 }}
-        />
-
-         {/* Flag Status Dropdown */}
-      <FormControl variant="outlined" sx={{ minWidth: 150, marginLeft: 1 }}>
-        <InputLabel>Flag Status</InputLabel>
-        <Select
-          value={flagStatus}
-          onChange={handleFlagChange}
-          label="Flag Status"
-        >
-          <MenuItem value=""><em>None</em></MenuItem>
-          <MenuItem value="Flagged">Flagged</MenuItem>
-          <MenuItem value="Unflagged">Unflagged</MenuItem>
-        </Select>
-      </FormControl>
-
-
-      </Box>
-    );
-  };
-
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -464,15 +380,19 @@ const ManageLoans = ({ isDrawerOpen }) => {
         
       </Box>
 
-      <ReviewFormModal
-        open={modalOpen}
-        onClose={handleCloseModal}
-        jsonFields={fields}
-        notesHistory={notesHistory}
-        onSubmit={handleModalSubmit}
-        onReset={handleReset}
-        onCancel={handleModalCancel}
-      />
+       {/* Pass selected row data to ReviewFormModal */}
+       {selectedRow && (
+                    <ReviewFormModal
+                        open={modalOpen}
+                        onClose={handleModalClose}
+                        jsonFields={templateData || []} // Template data or jsonFields for dynamic form
+                        selectedRow={selectedRow}  // Pass the selected row data
+                        onSubmit={() => console.log("Submitted")}
+                        onReset={() => console.log("Reset")}
+                        onCancel={handleModalClose}
+                        notesHistory={notesHistory}
+                    />
+                )}
     </LocalizationProvider>
   );
 };

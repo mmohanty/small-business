@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     TextField,
@@ -84,10 +84,23 @@ const CommentsModal = ({ open, onClose, commentValue, onChange, onSave }) => {
 };
 
 // Main ReviewForm Component with Modal
-const ReviewFormModal = ({ open, onClose, jsonFields, notesHistory, onSubmit, onReset, onCancel }) => {
-    const [formData, setFormData] = useState(
-        jsonFields.reduce((acc, field) => ({ ...acc, [field.fieldName]: field.value }), {})
-    );
+const ReviewFormModal = ({ open, onClose, jsonFields, selectedRow, notesHistory, onSubmit, onReset, onCancel }) => {
+    const [formData, setFormData] = useState({});
+
+    useEffect(() => {
+        //console.log('selectedRow:', selectedRow);
+        if (selectedRow) {
+            // Populate formData based on selectedRow when modal opens
+            console.log(selectedRow);
+            const initialData = jsonFields.reduce((acc, field) => ({
+                ...acc,
+                [field.fieldName]: selectedRow[field.fieldName] || '', // Use selected row data for each field
+            }), {});
+            setFormData(initialData);
+        }
+    }, [selectedRow, jsonFields]);
+
+
     const [flaggedFields, setFlaggedFields] = useState({});
     const [noteHistoryVisible, setNoteHistoryVisible] = useState(false);
     const [commentsModalOpen, setCommentsModalOpen] = useState(false);
@@ -130,7 +143,8 @@ const ReviewFormModal = ({ open, onClose, jsonFields, notesHistory, onSubmit, on
                 <DialogContent>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <Grid2 container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-                            {jsonFields.map((field, index) => (
+                        {(jsonFields && Array.isArray(jsonFields)) ? (
+                    jsonFields.map((field, index) => (
                                 <Grid2
                                     key={field.fieldName}
                                     xs={2}
@@ -139,9 +153,9 @@ const ReviewFormModal = ({ open, onClose, jsonFields, notesHistory, onSubmit, on
                                     sx={{ display: 'flex', alignItems: 'center' }}
                                     direction="column"
                                 >
-                                    {field.type === 'text' && (
+                                    {field.dataType === 'String' && (
                                         <TextField
-                                            label={field.label}
+                                            label={field.fieldName}
                                             variant="outlined"
                                             value={formData[field.fieldName]}
                                             onChange={(e) => handleInputChange(field.fieldName, e.target.value)}
@@ -150,10 +164,10 @@ const ReviewFormModal = ({ open, onClose, jsonFields, notesHistory, onSubmit, on
                                         />
                                     )}
 
-                                    {field.type === 'date' && (
+                                    {field.dataType === 'Date' && (
                                         <DatePicker
-                                            label={field.label}
-                                            value={formData[field.fieldName]}
+                                            label={field.fieldName}
+                                            //value={formData[field.fieldName]}
                                             onChange={(newValue) => handleInputChange(field.fieldName, newValue)}
                                             sx={{ marginRight: 2, width: '100%',  marginLeft: 8 }}
                                             renderInput={(params) => (
@@ -162,9 +176,9 @@ const ReviewFormModal = ({ open, onClose, jsonFields, notesHistory, onSubmit, on
                                         />
                                     )}
 
-                                    {field.type === 'currency' && (
+                                    {field.type === 'Currency' && (
                                         <TextField
-                                            label={field.label}
+                                            label={field.fieldName}
                                             variant="outlined"
                                             value={formData[field.fieldName]}
                                             onChange={(e) => handleInputChange(field.fieldName, e.target.value)}
@@ -228,7 +242,9 @@ const ReviewFormModal = ({ open, onClose, jsonFields, notesHistory, onSubmit, on
                         </Tooltip>
                     </Box>
                         </Grid2>
-                    ))}
+                    ))) :  (
+                        <p>No form fields available.</p>
+                    )}
                 </Grid2>
                     </LocalizationProvider>
                 </DialogContent>
