@@ -2,15 +2,12 @@ import React, { useState } from 'react';
 import { Box, List, ListItem, ListItemText, Typography, Paper, Button, IconButton, Dialog, AppBar, Toolbar, TextField, InputAdornment, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { DataGrid, GridRowModes, GridToolbar, GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarExport, GridToolbarFilterButton } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility'; // Eye icon to view details
-import FlagIcon from '@mui/icons-material/Flag'; // Flag icon
-import CloseIcon from '@mui/icons-material/Close'; // Close icon
 import { Refresh as RefreshIcon } from '@mui/icons-material';
 import Slide from '@mui/material/Slide';
 import {
   randomId,
 } from '@mui/x-data-grid-generator';
 import SearchIcon from '@mui/icons-material/Search'; // Import search icon
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'; // Import LocalizationProvider
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import ReviewFormModal from './ReviewFormModal';
@@ -20,7 +17,7 @@ const drawerWidth = 240;
 
 const templateData = [
   { id: 1, fieldName: 'LoanNumber', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
-  { id: 2, fieldName: 'SellerLoanNumber', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
+  { id: 2, fieldName: 'SellerLoanNumber', dataType: 'Currency', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
   { id: 3, fieldName: 'Borrower1FirstName', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
   { id: 4, fieldName: 'Borrower1LastName', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
   { id: 5, fieldName: 'Borrower2FirstName', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
@@ -31,14 +28,14 @@ const templateData = [
 
 
 const gridData = [
-  { id: 1, fieldName: 'LoanNumber', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
-  { id: 2, fieldName: 'SellerLoanNumber', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
-  { id: 3, fieldName: 'Borrower1FirstName', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
-  { id: 4, fieldName: 'Borrower1LastName', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
-  { id: 5, fieldName: 'Borrower2FirstName', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
-  { id: 6, fieldName: 'Borrower2LastName', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
-  { id: 7, fieldName: 'HaveLoan', dataType: 'String', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
-  { id: 8, fieldName: 'DOB', dataType: 'Date', isRequired: true, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
+  { id: 1, LoanNumber: '123', SellerLoanNumber: '123', Borrower1FirstName: "Bob1", Borrower1LastName: "Smith", Borrower2FirstName: "Bob1", Borrower2LastName: "Smith", HaveLoan: "Yes", DOB: "2022-01-01" },
+  { id: 2, LoanNumber: '345', SellerLoanNumber: '123', Borrower1FirstName: "Bob1", Borrower1LastName: "Smith", Borrower2FirstName: "Bob1", Borrower2LastName: "Smith", HaveLoan: "Yes", DOB: "2022-01-01"  },
+  { id: 3, LoanNumber: '456', SellerLoanNumber: '123', Borrower1FirstName: "Bob1", Borrower1LastName: "Smith", Borrower2FirstName: "Bob1", Borrower2LastName: "Smith", HaveLoan: "Yes", DOB: "2022-01-01"  },
+  { id: 4, LoanNumber: '124', SellerLoanNumber: '123', Borrower1FirstName: "Bob1", Borrower1LastName: "Smith", Borrower2FirstName: "Bob1", Borrower2LastName: "Smith", HaveLoan: "Yes", DOB: "2022-01-01"  },
+  { id: 5, LoanNumber: '432', SellerLoanNumber: '123', Borrower1FirstName: "Bob1", Borrower1LastName: "Smith", Borrower2FirstName: "Bob1", Borrower2LastName: "Smith", HaveLoan: "Yes", DOB: "2022-01-01"  },
+  { id: 6, LoanNumber: '346', SellerLoanNumber: '123', Borrower1FirstName: "Bob1", Borrower1LastName: "Smith", Borrower2FirstName: "Bob1", Borrower2LastName: "Smith", HaveLoan: "Yes", DOB: "2022-01-01"  },
+  { id: 7, LoanNumber: '790', SellerLoanNumber: '123', Borrower1FirstName: "Bob1", Borrower1LastName: "Smith", Borrower2FirstName: "Bob1", Borrower2LastName: "Smith", HaveLoan: "Yes", DOB: "2022-01-01"  },
+  { id: 8, LoanNumber: '987', SellerLoanNumber: '123', Borrower1FirstName: "Bob1", Borrower1LastName: "Smith", Borrower2FirstName: "Bob1", Borrower2LastName: "Smith", HaveLoan: "Yes", DOB: "2022-01-01"  },
 ];
 
 
@@ -48,35 +45,16 @@ const templates = [
   { id: 3, templateName: "Template 3", status: "Pending" }
 ];
 
-// Data
-const fields = [
-  {
-    label: 'Enter Text',
-    type: 'text',
-    value: '',
-    fieldName: 'textValue',
-  },
-  {
-    label: 'Select Date',
-    type: 'date',
-    value: null,
-    fieldName: 'dateValue',
-  },
-  {
-    label: 'Enter Amount',
-    type: 'text',
-    value: '',
-    fieldName: 'currencyValue',
-  },
-  {
-    label: 'Additional Field',
-    type: 'text',
-    value: '',
-    fieldName: 'additionalField',
-  },
-];
+const flagStatus = {
+  Borrower1FirstName: true,
+  Borrower1LastName: false,
+  Borrower2FirstName: true,
+  Borrower2LastName: false,
+  HaveLoan: false,
+  DOB: true,
+};
 
-const notesHistory = [
+const notesHistory = {"Borrower1FirstName":[
   {
     date: 'Apr 27',
     avatar: 'path_to_avatar_1.png',
@@ -112,7 +90,44 @@ const notesHistory = [
     task: 'Home page design',
     time: '12:03 pm',
   },
-];
+],
+"Borrower2FirstName":[
+  {
+    date: 'Apr 28',
+    avatar: 'path_to_avatar_1.png',
+    user: 'CUser 1',
+    task: 'Prepare questionnaire',
+    time: '11:43 am',
+  },
+  {
+    date: 'Apr 28',
+    avatar: 'path_to_avatar_2.png',
+    user: 'CUser 2',
+    task: 'Heuristic evaluation',
+    time: '11:43 am',
+  },
+  {
+    date: 'Apr 28',
+    avatar: 'path_to_avatar_3.png',
+    user: 'CUser 3',
+    task: 'Create Wireframes',
+    time: '9:20 am',
+  },
+  {
+    date: 'Apr 24',
+    avatar: 'path_to_avatar_4.png',
+    user: 'AUser 4',
+    task: 'Design a database',
+    time: '5:31 pm',
+  },
+  {
+    date: 'Apr 24',
+    avatar: 'path_to_avatar_5.png',
+    user: 'AUser 4',
+    task: 'Home page design',
+    time: '12:03 pm',
+  },
+]};
 
 // Slide transition for opening the modal
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -122,6 +137,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const ManageLoans = ({ isDrawerOpen }) => {
 
   const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [gridColumns, setGridColumnValue] = useState(null);
   const [modalOpen, setModalOpen] = useState(false); // Modal state for loan details
   const [selectedRow, setSelectedRow] = useState(null); // Store the selected row
   const [gridRows, setGridRows] = React.useState(templateData);
@@ -139,6 +155,35 @@ const ManageLoans = ({ isDrawerOpen }) => {
     setModalOpen(true);
   };
 
+  const lowerFirstLetter = (str) => {
+    return str.charAt(0).toLowerCase() + str.slice(1);
+  };
+
+  const prepareGridColumns = () => {
+    const columns = templateData.map((column) => {
+      const { id, fieldName, dataType, isRequired, isUnique, isEditable, minValue, maxValue, dataFormat} = column;
+      return {
+        field: fieldName, 
+        headerName: fieldName,
+        //type: dataType,
+        //editable: isEditable,
+        flex: 1
+        
+      };
+    });
+    columns.push({
+      field: 'actions',
+      headerName: 'Actions',
+      width: 100,
+      renderCell: (params) => (
+        <IconButton color="primary" onClick={() => handleViewClick(params.row)}>
+          <VisibilityIcon />
+        </IconButton>
+      )
+    });
+    setGridColumnValue(columns);
+  };
+
   const handleCloseModal = () => {
     setModalOpen(false);
   };
@@ -153,12 +198,9 @@ const ManageLoans = ({ isDrawerOpen }) => {
     handleCloseModal(); // Optionally close the modal on cancel
   };
   
-  const handleFlagChange = (event) => {
-    setFlagStatus(event.target.value);
-  };
-
   const handleLoanClick = (template) => {
     setSelectedTemplate(template);
+    prepareGridColumns();
   };
 
 
@@ -183,26 +225,6 @@ const ManageLoans = ({ isDrawerOpen }) => {
     template.templateName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Define the columns for the DataGrid
-  const columns = [
-    { field: 'fieldName', headerName: 'Field Name', width: 250 },
-    { field: 'dataType', headerName: 'Data Type', width: 150 },
-    { field: 'isRequired', headerName: 'Is Required', width: 120 },
-    { field: 'isEditable', headerName: 'Is Editable', width: 120 },
-    { field: 'minValue', headerName: 'Min Value/Length', width: 200 },
-    { field: 'maxValue', headerName: 'Max Value/Length', width: 200 },
-    { field: 'dataFormat', headerName: 'Data Format', width: 200 },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      renderCell: (params) => (
-        <IconButton color="primary" onClick={() => handleViewClick(params.row)}>
-          <VisibilityIcon />
-        </IconButton>
-      ),
-    },
-  ];
 
   const CustomToolbar = (props) => {
 
@@ -354,8 +376,8 @@ const ManageLoans = ({ isDrawerOpen }) => {
               }}
             >
               <DataGrid
-                rows={templateData}
-                columns={columns}
+                rows={gridData}
+                columns={gridColumns}
                 pageSize={5}
                 slots={{
                   toolbar: CustomToolbar,
@@ -390,7 +412,7 @@ const ManageLoans = ({ isDrawerOpen }) => {
                         onSubmit={() => console.log("Submitted")}
                         onReset={() => console.log("Reset")}
                         onCancel={handleModalClose}
-                        notesHistory={notesHistory}
+                        notesHistoryDetails={notesHistory}
                     />
                 )}
     </LocalizationProvider>

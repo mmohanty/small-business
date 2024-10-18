@@ -18,15 +18,22 @@ import {
   AccordionSummary,
   AccordionDetails,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
+import axios from 'axios';
 
 const Template = () => {
   const [rows, setRows] = useState([
     { fieldName: '', dataType: 'String', isRequired: false, isUnique: false, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
   ]);
   const [templateName, setTemplateName] = useState('');
+  const [file, setFile] = useState(null); // State for storing the selected file
+  const [openModal, setOpenModal] = useState(false); // State to control modal visibility
   const lastRowFieldRef = useRef(null); // Ref for the last row's field name input
 
   const dataTypes = ['String', 'Integer', 'Float', 'Date'];
@@ -59,12 +66,49 @@ const Template = () => {
 
   const handleSave = () => {
     console.log('Template saved', { templateName, rows });
-    // Add your logic to save the template (e.g., saving to local storage or a draft state)
   };
 
   const handleSubmit = () => {
     console.log('Template submitted', { templateName, rows });
-    // Add your logic to submit the template (e.g., submitting to an API)
+  };
+
+  // Handle file change for CSV upload
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  // Handle CSV upload and update rows with API response
+  const handleFileUpload = async () => {
+    if (!file) {
+      alert('Please select a CSV file first.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axios.post('/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const uploadedRows = response.data; // Assuming the response contains the rows
+      setRows(uploadedRows); // Update form rows with the data received from the API
+      setOpenModal(false); // Close the modal after successful upload
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+  };
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setFile(null); // Reset the file input when closing modal
   };
 
   return (
@@ -215,9 +259,15 @@ const Template = () => {
           gap: { xs: 2, sm: 0 },
         }}
       >
-        <Button variant="contained" color="primary" onClick={handleAddRow} sx={{ width: { xs: '100%', sm: 'auto' } }}>
-          Add Row
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button variant="contained" color="primary" onClick={handleAddRow} sx={{ width: { xs: '100%', sm: 'auto' } }}>
+            Add Row
+          </Button>
+          <Button variant="contained" color="primary" onClick={handleOpenModal}>
+            Upload CSV
+          </Button>
+        </Box>
+
         {/* Save and Submit buttons */}
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Button variant="contained" color="secondary" onClick={handleSave} sx={{ width: { xs: '100%', sm: 'auto' } }}>
@@ -227,6 +277,98 @@ const Template = () => {
             Submit
           </Button>
         </Box>
+      </Box>
+
+      {/* Upload CSV Modal */}
+      <Box sx={{ marginTop: 3 }}>
+        <Dialog
+          open={openModal}
+          onClose={handleCloseModal}
+          maxWidth="sm" // Set max width of the modal
+          fullWidth // Ensure the modal uses the full width as per the maxWidth
+          PaperProps={{
+            sx: {
+              height: '300px', // Set the height of the modal
+              padding: '20px', // Add padding for better spacing
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between'
+            }
+          }}
+        >
+          <DialogTitle sx={{ textAlign: 'center', fontSize: '1.5rem', fontWeight: 'bold' }}>
+            Upload CSV
+          </DialogTitle>
+          <DialogContent
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '20px',
+            }}
+          >
+            <input
+              accept=".csv"
+              type="file"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+              id="upload-file"
+            />
+            <label htmlFor="upload-file">
+              <Button
+                variant="contained"
+                component="span"
+                sx={{
+                  padding: '10px 20px',
+                  backgroundColor: '#1976d2',
+                  '&:hover': { backgroundColor: '#115293' },
+                  fontWeight: 'bold',
+                  marginBottom: '20px',
+                }}
+              >
+                Choose File
+              </Button>
+            </label>
+            {file && (
+              <Typography
+                sx={{
+                  fontSize: '1rem',
+                  color: '#555',
+                  marginBottom: '10px',
+                  textAlign: 'center',
+                }}
+              >
+                {file.name}
+              </Typography>
+            )}
+          </DialogContent>
+          <DialogActions sx={{ justifyContent: 'space-between', padding: '20px' }}>
+            <Button
+              onClick={handleCloseModal}
+              sx={{
+                color: '#555',
+                fontWeight: 'bold',
+                '&:hover': { color: '#000' },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleFileUpload}
+              sx={{
+                padding: '10px 20px',
+                backgroundColor: '#28a745',
+                fontWeight: 'bold',
+                '&:hover': { backgroundColor: '#218838' },
+              }}
+            >
+              Submit CSV
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Box>
   );
