@@ -29,7 +29,7 @@ import axios from 'axios';
 
 const Template = () => {
   const [rows, setRows] = useState([
-    { fieldName: '', dataType: 'String', isRequired: false, isUnique: false, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
+    { id: Date.now(), fieldName: '', dataType: 'String', isRequired: false, isUnique: false, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
   ]);
   const [templateName, setTemplateName] = useState('');
   const [file, setFile] = useState(null); // State for storing the selected file
@@ -41,7 +41,17 @@ const Template = () => {
   const handleAddRow = () => {
     setRows((prevRows) => [
       ...prevRows,
-      { fieldName: '', dataType: 'String', isRequired: false, isUnique: false, isEditable: false, minValue: '', maxValue: '', dataFormat: '' },
+      {
+        id: Date.now(), // Generate a unique id for each row
+        fieldName: '',
+        dataType: 'String',
+        isRequired: false,
+        isUnique: false,
+        isEditable: false,
+        minValue: '',
+        maxValue: '',
+        dataFormat: '',
+      },
     ]);
   };
 
@@ -51,16 +61,16 @@ const Template = () => {
     }
   }, [rows]);
 
-  const handleDeleteRow = (index) => {
-    const updatedRows = [...rows];
-    updatedRows.splice(index, 1);
+  const handleDeleteRow = (id) => {
+    const updatedRows = rows.filter((row) => row.id !== id);
     setRows(updatedRows);
   };
 
-  const handleInputChange = (index, event) => {
+  const handleInputChange = (id, event) => {
     const { name, value, type, checked } = event.target;
-    const updatedRows = [...rows];
-    updatedRows[index][name] = type === 'checkbox' ? checked : value;
+    const updatedRows = rows.map((row) =>
+      row.id === id ? { ...row, [name]: type === 'checkbox' ? checked : value } : row
+    );
     setRows(updatedRows);
   };
 
@@ -159,13 +169,13 @@ const Template = () => {
               </TableHead>
               <TableBody>
                 {rows.map((row, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={row.id}> {/* Use row.id as the unique key */}
                     <TableCell sx={{ padding: '8px' }}>{index + 1}</TableCell>
                     <TableCell sx={{ padding: '8px' }}>
                       <TextField
                         name="fieldName"
                         value={row.fieldName}
-                        onChange={(event) => handleInputChange(index, event)}
+                        onChange={(event) => handleInputChange(row.id, event)}
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -176,7 +186,7 @@ const Template = () => {
                       <Select
                         name="dataType"
                         value={row.dataType}
-                        onChange={(event) => handleInputChange(index, event)}
+                        onChange={(event) => handleInputChange(row.id, event)}
                         fullWidth
                         size="small"
                         sx={{
@@ -197,21 +207,21 @@ const Template = () => {
                       <Checkbox
                         name="isRequired"
                         checked={row.isRequired}
-                        onChange={(event) => handleInputChange(index, event)}
+                        onChange={(event) => handleInputChange(row.id, event)}
                       />
                     </TableCell>
                     <TableCell sx={{ padding: '8px' }}>
                       <Checkbox
                         name="isEditable"
                         checked={row.isEditable}
-                        onChange={(event) => handleInputChange(index, event)}
+                        onChange={(event) => handleInputChange(row.id, event)}
                       />
                     </TableCell>
                     <TableCell sx={{ padding: '8px' }}>
                       <TextField
                         name="minValue"
                         value={row.minValue}
-                        onChange={(event) => handleInputChange(index, event)}
+                        onChange={(event) => handleInputChange(row.id, event)}
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -221,7 +231,7 @@ const Template = () => {
                       <TextField
                         name="maxValue"
                         value={row.maxValue}
-                        onChange={(event) => handleInputChange(index, event)}
+                        onChange={(event) => handleInputChange(row.id, event)}
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -231,14 +241,14 @@ const Template = () => {
                       <TextField
                         name="dataFormat"
                         value={row.dataFormat}
-                        onChange={(event) => handleInputChange(index, event)}
+                        onChange={(event) => handleInputChange(row.id, event)}
                         variant="outlined"
                         fullWidth
                         size="small"
                       />
                     </TableCell>
                     <TableCell sx={{ padding: '8px' }}>
-                      <IconButton onClick={() => handleDeleteRow(index)} color="error">
+                      <IconButton onClick={() => handleDeleteRow(row.id)} color="error">
                         <DeleteIcon />
                       </IconButton>
                     </TableCell>
@@ -250,6 +260,7 @@ const Template = () => {
         </AccordionDetails>
       </Accordion>
 
+      {/* Modal and Buttons */}
       <Box
         sx={{
           marginTop: 2,

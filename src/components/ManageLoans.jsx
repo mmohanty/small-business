@@ -11,6 +11,7 @@ import SearchIcon from '@mui/icons-material/Search'; // Import search icon
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'; // Import LocalizationProvider
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import ReviewFormModal from './ReviewFormModal';
+import { useBackdrop } from './BackdropProvider';
 
 // Assuming the drawer is 240px wide when open
 const drawerWidth = 240;
@@ -145,10 +146,14 @@ const ManageLoans = ({ isDrawerOpen }) => {
   const [searchTerm, setSearchTerm] = useState(''); // State to track the search term
 
   const [flagStatus, setFlagStatus] = useState(''); // State to track selected flag status
+  const { showBackdrop, hideBackdrop } = useBackdrop(); 
 
 
   const handleReset = () => {
     console.log('Form Reset');
+
+   
+
   };
 
   const handleOpenModal = () => {
@@ -231,15 +236,22 @@ const ManageLoans = ({ isDrawerOpen }) => {
     const { setRows, setRowModesModel } = props;
 
     const handleAddClick = () => {
-      const id = randomId();
-      setRows((oldRows) => [
-        ...oldRows,
-        { id, firstName: '', lastName: '', fullName: '', age: '' },
-      ]);
-      setRowModesModel((oldModel) => ({
-        ...oldModel,
-        [id]: { mode: GridRowModes.Edit, fieldToFocus: 'firstName' },
-      }));
+      // const id = randomId();
+      // setRows((oldRows) => [
+      //   ...oldRows,
+      //   { id, firstName: '', lastName: '', fullName: '', age: '' },
+      // ]);
+      // setRowModesModel((oldModel) => ({
+      //   ...oldModel,
+      //   [id]: { mode: GridRowModes.Edit, fieldToFocus: 'firstName' },
+      // }));
+
+      showBackdrop('Loading...');
+
+      // Simulate an async operation, then hide the backdrop
+      setTimeout(() => {
+        hideBackdrop();
+      }, 3000); // Hide the Backdrop after 3 seconds
     };
 
     return (

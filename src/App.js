@@ -15,6 +15,8 @@ import Dashboard from "./components/Dashboard";
 import Template from "./components/Template";
 import ApproveTemplate from "./components/ApproveTemplate";
 import ManageLoans from "./components/ManageLoans";
+import { SnackbarProvider } from "./components/SnackbarProvider";
+import { BackdropProvider } from "./components/BackdropProvider";
 
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -37,6 +39,8 @@ function App() {
   return (
     <Router>
       <div>
+      <SnackbarProvider>
+        <BackdropProvider>
         <Header toggleDrawer={toggleDrawer} />
         <DrawerMenu isOpen={drawerOpen} toggleDrawer={toggleDrawer} />
         <main style={{ marginTop: "80px", padding: "20px" }}>
@@ -103,6 +107,8 @@ function App() {
           </Routes>
         </main>
         {/* <Footer /> */}
+        </BackdropProvider>
+        </SnackbarProvider>
       </div>
     </Router>
   );

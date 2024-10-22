@@ -187,6 +187,7 @@ const ReviewFormModal = ({ open, onClose, jsonFields, selectedRow, notesHistoryD
                                             <TextField
                                                 label={field.fieldName}
                                                 variant="outlined"
+                                                disabled={!field.isEditable} 
                                                 value={formData[field.fieldName] || ''}
                                                 onChange={(e) => handleInputChange(field.fieldName, e.target.value)}
                                                 fullWidth
@@ -197,6 +198,7 @@ const ReviewFormModal = ({ open, onClose, jsonFields, selectedRow, notesHistoryD
                                         {field.dataType === 'Date' && (
                                             <DatePicker
                                                 label={field.fieldName}
+                                                disabled={!field.isEditable} 
                                                 value={formData[field.fieldName] ? dayjs(formData[field.fieldName]) : null}
                                                 onChange={(newValue) => handleInputChange(field.fieldName, newValue)}
                                                 sx={{ marginRight: 2, width: '100%', marginLeft: 8 }}
@@ -210,6 +212,7 @@ const ReviewFormModal = ({ open, onClose, jsonFields, selectedRow, notesHistoryD
                                             <TextField
                                                 label={field.fieldName}
                                                 variant="outlined"
+                                                disabled={!field.isEditable} 
                                                 value={formatCurrency(formData[field.fieldName])} // Display formatted value
                                                 onChange={(e) => handleCurrencyChange(field.fieldName, e.target.value)} // Handle raw input
                                                 fullWidth
