@@ -37,6 +37,7 @@ const DrawerMenu = () => {
     { text: 'Approve Template', link: '/approveTemplates', icon: <VerifiedIcon /> },
     { text: 'Manage Loans', link: '/manageLoans', icon: <ListAlt /> },
     { text: 'Services', link: '/services', icon: <Business /> },
+    { text: 'Templates View', link: '/templates', icon: <Business /> },
   ];
 
   const menuItemsForCustodian = [
@@ -44,6 +45,7 @@ const DrawerMenu = () => {
     { text: 'Dashboard', link: '/dashboard', icon: <Dashboard /> },
     { text: 'About', link: '/about', icon: <ContactSupport /> },
     { text: 'Services', link: '/services', icon: <Business /> },
+    { text: 'Templates View', link: '/templates', icon: <Business /> },
   ];
 
   return (
