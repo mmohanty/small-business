@@ -18,6 +18,7 @@ import ManageLoans from "./components/ManageLoans";
 import { SnackbarProvider } from "./components/SnackbarProvider";
 import { BackdropProvider } from "./components/BackdropProvider";
 import TemplatesList from "./components/TemplateList";
+import TemplateSelect from "./components/Dummy";
 
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -109,6 +110,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <TemplatesList />
+                </PrivateRoute>
+              }
+            />
+             <Route
+              path="/dummy"
+              element={
+                <PrivateRoute>
+                  <TemplateSelect />
                 </PrivateRoute>
               }
             />

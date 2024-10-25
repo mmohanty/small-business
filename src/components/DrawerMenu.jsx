@@ -38,6 +38,7 @@ const DrawerMenu = () => {
     { text: 'Manage Loans', link: '/manageLoans', icon: <ListAlt /> },
     { text: 'Services', link: '/services', icon: <Business /> },
     { text: 'Templates View', link: '/templates', icon: <Business /> },
+    { text: 'Dummy', link: '/dummy', icon: <Business /> },
   ];
 
   const menuItemsForCustodian = [
