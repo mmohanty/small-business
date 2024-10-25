@@ -3,11 +3,54 @@ import { TextField, MenuItem, FormControl, Select, InputLabel, Box, IconButton, 
 import RefreshIcon from '@mui/icons-material/Refresh';
 
 const templates = [
-  { id: "1", name: "Template1" },
-  { id: "2", name: "Template2" },
-  { id: "3", name: "Template3" },
+  {
+    id: "1",
+    name: "Template1",
+    fields: {
+      LoanNumber: { data_type: "String", min: 1, max: 4, is_required: true, is_editable: false, data_format: "" },
+      SellerLoanNumber: { data_type: "Currency", min: 1, max: 4, is_required: true, is_editable: false, data_format: "" },
+      Borrower1FirstName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
+      Borrower1LastName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
+      Borrower2FirstName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
+      Borrower2LastName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
+      HaveLoan: { data_type: "String", min: 1, max: 3, is_required: true, is_editable: false, data_format: "" },
+      DOB: { data_type: "Date", min: "", max: "", is_required: true, is_editable: false, data_format: "" }
+    }
+  }
   // Additional templates here...
 ];
+
+const templates2 = [
+    {
+      id: "1",
+      name: "Template1",
+      fields: {
+        LoanNumber: { data_type: "String", min: 1, max: 4, is_required: true, is_editable: false, data_format: "" },
+        SellerLoanNumber: { data_type: "Currency", min: 1, max: 4, is_required: true, is_editable: false, data_format: "" },
+        Borrower1FirstName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
+        Borrower1LastName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
+        Borrower2FirstName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
+        Borrower2LastName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
+        HaveLoan: { data_type: "String", min: 1, max: 3, is_required: true, is_editable: false, data_format: "" },
+        DOB: { data_type: "Date", min: "", max: "", is_required: true, is_editable: false, data_format: "" }
+      }
+    },
+    {
+      id: "2",
+      name: "Template2",
+      fields: {
+        LoanNumber: { data_type: "String", min: 1, max: 4, is_required: true, is_editable: false, data_format: "" },
+        SellerLoanNumber: { data_type: "Currency", min: 1, max: 4, is_required: true, is_editable: false, data_format: "" },
+        Borrower1FirstName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
+        Borrower1LastName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
+        Borrower2FirstName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
+        Borrower2LastName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
+        HaveLoan: { data_type: "String", min: 1, max: 3, is_required: true, is_editable: false, data_format: "" },
+        DOB: { data_type: "Date", min: "", max: "", is_required: true, is_editable: false, data_format: "" }
+      }
+    }
+    // Additional templates here...
+  ];
 
 const TemplateSelect = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -15,12 +58,10 @@ const TemplateSelect = () => {
   const [templateData, setTemplateData] = useState(templates);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  // Open the dropdown menu
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  // Close the dropdown menu
   const handleClose = () => {
     setAnchorEl(null);
     setSearchTerm(''); // Clear search term on close
@@ -37,7 +78,7 @@ const TemplateSelect = () => {
 
   const handleRefresh = () => {
     console.log("Data reloaded");
-    setTemplateData([...templates]); // Replace with actual data reload logic
+    setTemplateData([...templates2]); // Replace with actual data reload logic
   };
 
   // Filter templates based on search term
