@@ -1,60 +1,103 @@
 import React, { useState, useEffect } from 'react';
-import { Box, List, ListItem, ListItemText, Typography, Paper, Button, IconButton, TextField, InputAdornment } from '@mui/material';
-import { DataGrid, GridToolbarContainer } from '@mui/x-data-grid';
+import axios from 'axios';
+import { Box, List, ListItem, ListItemText, Typography, Paper, Button, IconButton, TextField, InputAdornment, Grid, Dialog, DialogTitle, DialogContent, DialogActions, Tooltip } from '@mui/material';
+import { DataGrid, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarDensitySelector, GridToolbarExport } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Refresh as RefreshIcon } from '@mui/icons-material';
+import { Comment, Flag, FlagOutlined, History, Refresh as RefreshIcon } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import ReviewFormModal from './ReviewFormModal';
 import { useBackdrop } from './BackdropProvider';
 
 const drawerWidth = 240;
 
-const templates = [
-  {
-    id: "1",
-    name: "Template1",
-    fields: {
-      LoanNumber: { data_type: "String", min: 1, max: 4, is_required: true, is_editable: false, data_format: "" },
-      SellerLoanNumber: { data_type: "Currency", min: 1, max: 4, is_required: true, is_editable: false, data_format: "" },
-      Borrower1FirstName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
-      Borrower1LastName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
-      Borrower2FirstName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
-      Borrower2LastName: { data_type: "String", min: 1, max: 50, is_required: true, is_editable: false, data_format: "" },
-      HaveLoan: { data_type: "String", min: 1, max: 3, is_required: true, is_editable: false, data_format: "" },
-      DOB: { data_type: "Date", min: "", max: "", is_required: true, is_editable: false, data_format: "" }
-    }
-  }
-  // Additional templates here...
-];
-
-const rawGridData = [
-  { id: 1, LoanNumber: '123', SellerLoanNumber: '123', Borrower1FirstName: "Bob1", Borrower1LastName: "Smith", Borrower2FirstName: "Bob1", Borrower2LastName: "Smith", HaveLoan: "Yes", DOB: "2022-01-01" },
-  // Additional rows
-];
-
 const ManageLoans = ({ isDrawerOpen }) => {
+  const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [gridColumns, setGridColumns] = useState([]);
   const [gridData, setGridData] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [loanModalOpen, setLoanModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const { showBackdrop, hideBackdrop } = useBackdrop();
 
+  const [fieldComments, setFieldComments] = useState({}); // To store comments for each field
+  const [fieldFlags, setFieldFlags] = useState({}); // To store flagged status for each field
+  const [notesModalOpen, setNotesModalOpen] = useState(false); // To show notes history
+  const [selectedFieldNotes, setSelectedFieldNotes] = useState([]); // Stores notes for a field
+  const [createClicked, setCreateClicked  ] = useState(false); // Stores event to decide modal behaviour
+  const [fieldValues, setFieldValues] = useState({}); // Store values for each field
+
+  const fetchTemplateData = async () => {
+    const url2 = 'https://dummyjson.com/c/91bc-f393-4ffe-bbc0';
+    try {
+      const response = await axios.get(url2);
+      setTemplates(response.data);
+    } catch (error) {
+      console.error('Error fetching template data:', error);
+    }
+  };
+
   useEffect(() => {
-    // Preprocess rawGridData to convert date strings to Date objects
-    const processedData = rawGridData.map((row) => ({
-      ...row,
-      DOB: row.DOB ? new Date(row.DOB) : null, // Convert DOB to Date object if it exists
-    }));
-    setGridData(processedData);
+    fetchTemplateData();
   }, []);
 
-  const handleTemplateSelectClick = (template) => {
+  const handleFlagToggle = (field) => {
+    setFieldFlags((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
+  };
+
+  const handleAddComment = (field, comment) => {
+    setFieldComments((prev) => ({
+      ...prev,
+      [field]: [
+        ...(prev[field] || []),
+        { userType: "User", note: comment, timestamp: new Date().toLocaleString() },
+      ],
+    }));
+  };
+
+  const handleViewNotes = (field) => {
+    setSelectedFieldNotes(fieldComments[field] || []);
+    setNotesModalOpen(true);
+  };
+  const fetchLoanData = async () => {
+    const url1 = 'https://dummyjson.com/c/cefa-1a9d-4b8c-90a9';
+    try {
+      const response = await axios.get(url1);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching loan data:', error);
+      throw error;
+    }
+  };
+
+  const handleTemplateSelectClick = async (template) => {
     setSelectedTemplate(template);
     prepareGridColumns(template.fields);
+
+    showBackdrop('Loading data...');
+    try {
+      const data = await fetchLoanData();
+      const processedData = data.data.map((item) => {
+        const flatAttributes = Object.entries(item.attributes).reduce((acc, [key, attr]) => {
+          acc[key] = attr?.value || null;
+          acc[`${key}_flagged`] = attr?.flagged || false;
+          acc[`${key}_comments`] = attr?.comments || [];
+          return acc;
+        }, {});
+
+        return { id: item.id, status: item.status, ...flatAttributes };
+      });
+
+      setGridData(processedData);
+    } catch (error) {
+      console.error("Error fetching grid data:", error);
+    } finally {
+      hideBackdrop();
+    }
   };
 
   const prepareGridColumns = (fields) => {
@@ -73,7 +116,7 @@ const ManageLoans = ({ isDrawerOpen }) => {
         <IconButton color="primary" onClick={() => handleViewClick(params.row)}>
           <VisibilityIcon />
         </IconButton>
-      )
+      ),
     });
     setGridColumns(columns);
   };
@@ -84,35 +127,134 @@ const ManageLoans = ({ isDrawerOpen }) => {
 
   const handleViewClick = (row) => {
     setSelectedRow(row);
-    setModalOpen(true);
+    setCreateClicked(false);
+    setLoanModalOpen(true);
   };
 
-  const handleModalClose = () => {
-    setModalOpen(false);
+  const handleCreateLoanClick = () => {
+    setLoanModalOpen(true);
+    setCreateClicked(true);
+  };
+
+  const handleLoanModalClose = () => {
+    setLoanModalOpen(false);
+    setCreateClicked(false);
+  };
+
+  const handleLoanSubmit = () => {
+    const loanData = {
+      ...fieldValues,
+      flags: fieldFlags,
+      comments: fieldComments,
+    };
+    
+    // Here, you'd make an API call or perform another action to submit loanData
+    console.log("Submitting Loan Data:", loanData);
+    setLoanModalOpen(false); // Close modal on submit
   };
 
   const filteredTemplates = templates.filter((template) =>
     template.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleLoanReset = () => {
+    if (selectedRow) {
+      // Reset to original values from selectedRow for view/edit mode
+      setFieldValues(Object.keys(selectedTemplate.fields).reduce((acc, fieldKey) => {
+        acc[fieldKey] = selectedRow[fieldKey] || '';
+        return acc;
+      }, {}));
+  
+      setFieldFlags(Object.keys(selectedTemplate.fields).reduce((acc, fieldKey) => {
+        acc[fieldKey] = selectedRow[`${fieldKey}_flagged`] || false;
+        return acc;
+      }, {}));
+  
+      setFieldComments(Object.keys(selectedTemplate.fields).reduce((acc, fieldKey) => {
+        acc[fieldKey] = selectedRow[`${fieldKey}_comments`] || [];
+        return acc;
+      }, {}));
+    } else {
+      // Clear values for creating a new loan
+      setFieldValues({});
+      setFieldFlags({});
+      setFieldComments({});
+    }
+  };
+
+  const handleFieldChange = (event, field) => {
+    const { name, checked } = event.target;
+    setFieldFlags((prev) => ({
+      ...prev,
+      [field]: checked,
+    }));
+  };
+
+
+  const CustomToolbar = () => (
+    <GridToolbarContainer>
+      <GridToolbarColumnsButton />
+      <GridToolbarFilterButton />
+      <GridToolbarDensitySelector />
+      <GridToolbarExport />
+      <Box sx={{ flexGrow: 1 }} />
+      <Button variant="contained" color="primary" onClick={handleCreateLoanClick}>
+        Create Loan
+      </Button>
+      <Button
+        variant="contained"
+        color="secondary"
+        sx={{ marginLeft: 1 }}
+        onClick={() => document.querySelector('[data-testid="Export CSV"]').click()}
+      >
+        Export Data
+      </Button>
+      <Button variant="outlined" color="info">
+        Refresh
+      </Button>
+    </GridToolbarContainer>
+  );
+
+  
+  
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, padding: 2, height: { xs: 'auto', md: '90vh' }, ml: isDrawerOpen ? `${drawerWidth}px` : '0', transition: 'margin-left 0.3s ease' }}>
-        
         <Paper elevation={3} sx={{ width: { xs: '100%', md: '20%' }, padding: 2, marginLeft: { xs: 0, md: 3 }, marginRight: { md: 2 }, marginBottom: { xs: 2, md: 0 } }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h6" gutterBottom>
-              Template List
-            </Typography>
-            <Button variant="outlined" startIcon={<RefreshIcon />} onClick={() => console.log('Refresh button clicked')}>
-              Refresh
-            </Button>
+            <Typography variant="h6" gutterBottom>Template List</Typography>
+            <Button variant="outlined" startIcon={<RefreshIcon />} onClick={fetchTemplateData}>Refresh</Button>
           </Box>
 
-          <TextField label="Search Templates" variant="outlined" fullWidth sx={{ mt: 2 }} value={searchTerm} onChange={handleSearchChange} slotProps={{ input: { startAdornment: (<InputAdornment position="start"><SearchIcon /></InputAdornment>) } }} />
+          <TextField
+            label="Search Templates"
+            variant="outlined"
+            fullWidth
+            sx={{ mt: 2 }}
+            value={searchTerm}
+            onChange={handleSearchChange}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
           <List>
             {filteredTemplates.map((template) => (
-              <ListItem key={template.id} onClick={() => handleTemplateSelectClick(template)} selected={selectedTemplate?.id === template.id} sx={{ backgroundColor: selectedTemplate?.id === template.id ? 'lightblue' : 'inherit', '&:hover': { backgroundColor: selectedTemplate?.id === template.id ? 'lightblue' : 'rgba(0, 0, 0, 0.04)' } }}>
+              <ListItem
+                key={template.id}
+                onClick={() => handleTemplateSelectClick(template)}
+                selected={selectedTemplate?.id === template.id}
+                sx={{
+                  backgroundColor: selectedTemplate?.id === template.id ? 'lightblue' : 'inherit',
+                  '&:hover': {
+                    backgroundColor: selectedTemplate?.id === template.id ? 'lightblue' : 'rgba(0, 0, 0, 0.04)',
+                  },
+                }}
+              >
                 <ListItemText primary={template.name} />
               </ListItem>
             ))}
@@ -120,9 +262,7 @@ const ManageLoans = ({ isDrawerOpen }) => {
         </Paper>
 
         <Paper elevation={3} sx={{ width: { xs: '100%', md: '80%' }, padding: 2, height: { xs: 'auto' }, overflowY: 'auto' }}>
-          <Typography variant="h6" gutterBottom>
-            Loan Details
-          </Typography>
+          <Typography variant="h6" gutterBottom>Loan Details</Typography>
 
           {!selectedTemplate ? (
             <Typography variant="body1">Select a template to view its details</Typography>
@@ -132,7 +272,7 @@ const ManageLoans = ({ isDrawerOpen }) => {
                 rows={gridData}
                 columns={gridColumns}
                 pageSize={5}
-                slots={{ toolbar: GridToolbarContainer }}
+                slots={{ toolbar: CustomToolbar }}
                 disableSelectionOnClick
               />
             </Box>
@@ -140,17 +280,87 @@ const ManageLoans = ({ isDrawerOpen }) => {
         </Paper>
       </Box>
 
-      {selectedRow && (
-        <ReviewFormModal
-          open={modalOpen}
-          onClose={handleModalClose}
-          jsonFields={selectedTemplate.fields}
-          selectedRow={selectedRow}
-          onSubmit={() => console.log("Submitted")}
-          onReset={() => console.log("Reset")}
-          onCancel={handleModalClose}
-        />
-      )}
+      {/* Create Loan Modal */}
+      <Dialog
+        open={loanModalOpen}
+        onClose={() => handleLoanModalClose()}
+        maxWidth="md"
+        fullWidth
+        sx={{
+          '& .MuiDialog-paper': {
+            maxHeight: '90vh',       // Cap the height at 90% of the viewport
+            overflowY: 'auto'        // Allow scrolling if content exceeds maxHeight
+          }
+        }}
+      >
+        <DialogTitle>Loan Details</DialogTitle>
+        <DialogContent>
+          <Grid container spacing={2}>
+            {selectedTemplate && Object.entries(selectedTemplate.fields).map(([fieldKey, fieldData]) => (
+              <Grid item xs={12} sm={6} key={fieldKey}>
+                <Box display="flex" alignItems="center">
+                  <TextField
+                    label={fieldKey}
+                    value={createClicked ? '' : selectedRow?.[fieldKey] || ''}
+                    disabled={!createClicked && !fieldData.is_editable} // Disable based on template.is_editable
+                    onChange={(event) => handleFieldChange(fieldKey, event.target.value)}
+                    type={fieldData.data_type === "Date" ? "date" : "text"}
+                    fullWidth
+                    variant="outlined"
+                    InputLabelProps={fieldData.data_type === "Date" ? { shrink: true } : {}}
+                  />
+                  <Box ml={1} display="flex">
+                    <Tooltip title="Flag Field">
+                      <IconButton onClick={() => handleFlagToggle(fieldKey)}>
+                        {fieldFlags[fieldKey] ? <Flag color="error" /> : <FlagOutlined />}
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Add Comment">
+                      <IconButton onClick={() => handleAddComment(fieldKey, prompt("Enter comment"))}>
+                        <Comment />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="View Notes">
+                      <IconButton onClick={() => handleViewNotes(fieldKey)}>
+                        <History />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setLoanModalOpen(false)} color="secondary">Cancel</Button>
+          <Button onClick={() => console.log("Create Loan")} color="primary">Create Loan</Button>
+          <Button onClick={handleLoanReset} color="secondary">Reset</Button>
+            <Button onClick={handleLoanSubmit} color="primary">Submit</Button>
+        </DialogActions>
+      </Dialog>
+
+
+      {/* Notes Modal */}
+      <Dialog open={notesModalOpen} onClose={() => setNotesModalOpen(false)}>
+        <DialogTitle>Notes History</DialogTitle>
+        <DialogContent>
+          {selectedFieldNotes.length > 0 ? (
+            selectedFieldNotes.map((note, index) => (
+              <Box key={index} sx={{ marginBottom: 2 }}>
+                <Typography variant="body2"><strong>User Type:</strong> {note.userType}</Typography>
+                <Typography variant="body2"><strong>Timestamp:</strong> {note.timestamp}</Typography>
+                <Typography variant="body2"><strong>Note:</strong> {note.note}</Typography>
+              </Box>
+            ))
+          ) : (
+            <Typography>No comments found.</Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNotesModalOpen(false)} color="primary">Close</Button>
+        </DialogActions>
+      </Dialog>
+
     </LocalizationProvider>
   );
 };
