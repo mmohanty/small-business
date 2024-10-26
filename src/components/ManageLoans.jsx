@@ -308,6 +308,7 @@ const ManageLoans = ({ isDrawerOpen }) => {
                     fullWidth
                     variant="outlined"
                     InputLabelProps={fieldData.data_type === "Date" ? { shrink: true } : {}}
+                    sx={{ mt: 2 }} // Add top margin here
                   />
                   <Box ml={1} display="flex">
                     <Tooltip title="Flag Field">
