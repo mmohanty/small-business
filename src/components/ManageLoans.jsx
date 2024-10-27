@@ -8,7 +8,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useBackdrop } from './BackdropProvider';
-
+import { saveAs } from 'file-saver';
 const drawerWidth = 240;
 
 const ManageLoans = ({ isDrawerOpen }) => {
