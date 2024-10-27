@@ -25,7 +25,7 @@ const ManageLoans = ({ isDrawerOpen }) => {
   const [fieldFlags, setFieldFlags] = useState({}); // To store flagged status for each field
   const [notesModalOpen, setNotesModalOpen] = useState(false); // To show notes history
   const [selectedFieldNotes, setSelectedFieldNotes] = useState([]); // Stores notes for a field
-  const [createClicked, setCreateClicked  ] = useState(false); // Stores event to decide modal behaviour
+  const [createClicked, setCreateClicked] = useState(false); // Stores event to decide modal behaviour
   const [fieldValues, setFieldValues] = useState({}); // Store values for each field
 
   const fetchTemplateData = async () => {
@@ -147,7 +147,7 @@ const ManageLoans = ({ isDrawerOpen }) => {
       flags: fieldFlags,
       comments: fieldComments,
     };
-    
+
     // Here, you'd make an API call or perform another action to submit loanData
     console.log("Submitting Loan Data:", loanData);
     setLoanModalOpen(false); // Close modal on submit
@@ -164,12 +164,12 @@ const ManageLoans = ({ isDrawerOpen }) => {
         acc[fieldKey] = selectedRow[fieldKey] || '';
         return acc;
       }, {}));
-  
+
       setFieldFlags(Object.keys(selectedTemplate.fields).reduce((acc, fieldKey) => {
         acc[fieldKey] = selectedRow[`${fieldKey}_flagged`] || false;
         return acc;
       }, {}));
-  
+
       setFieldComments(Object.keys(selectedTemplate.fields).reduce((acc, fieldKey) => {
         acc[fieldKey] = selectedRow[`${fieldKey}_comments`] || [];
         return acc;
@@ -182,13 +182,19 @@ const ManageLoans = ({ isDrawerOpen }) => {
     }
   };
 
-  const handleFieldChange = (event, field) => {
-    const { name, checked } = event.target;
-    setFieldFlags((prev) => ({
+  const handleFieldChange = (fieldKey, value) => {
+    setFieldValues((prev) => ({
       ...prev,
-      [field]: checked,
+      [fieldKey]: value,
     }));
   };
+  const exportToCSV = (selectedColumns) => {
+    const filteredRows = rows.map(row => 
+      selectedColumns.reduce((acc, field) => {
+        acc[field] = row[field];
+        return acc;
+      }, {})
+    );
 
 
   const CustomToolbar = () => (
@@ -215,8 +221,8 @@ const ManageLoans = ({ isDrawerOpen }) => {
     </GridToolbarContainer>
   );
 
-  
-  
+
+
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -301,14 +307,14 @@ const ManageLoans = ({ isDrawerOpen }) => {
                 <Box display="flex" alignItems="center">
                   <TextField
                     label={fieldKey}
-                    value={createClicked ? '' : selectedRow?.[fieldKey] || ''}
-                    disabled={!createClicked && !fieldData.is_editable} // Disable based on template.is_editable
-                    onChange={(event) => handleFieldChange(fieldKey, event.target.value)}
+                    value={fieldValues[fieldKey] || ''}
+                    disabled={!createClicked && !fieldData.is_editable}
+                    onChange={(event) => handleFieldChange(fieldKey, event.target.value)} // Directly pass fieldKey and value
                     type={fieldData.data_type === "Date" ? "date" : "text"}
                     fullWidth
                     variant="outlined"
                     InputLabelProps={fieldData.data_type === "Date" ? { shrink: true } : {}}
-                    sx={{ mt: 2 }} // Add top margin here
+                    sx={{ mt: 2 }}
                   />
                   <Box ml={1} display="flex">
                     <Tooltip title="Flag Field">
@@ -331,12 +337,13 @@ const ManageLoans = ({ isDrawerOpen }) => {
               </Grid>
             ))}
           </Grid>
+
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setLoanModalOpen(false)} color="secondary">Cancel</Button>
-          <Button onClick={() => console.log("Create Loan")} color="primary">Create Loan</Button>
-          <Button onClick={handleLoanReset} color="secondary">Reset</Button>
-            <Button onClick={handleLoanSubmit} color="primary">Submit</Button>
+          <Button onClick={() => handleLoanSubmit()} color="primary">Create Loan</Button>
+          <Button onClick={() =>handleLoanReset} color="secondary">Reset</Button>
+          <Button onClick={() => handleLoanSubmit()} color="primary">Submit</Button>
         </DialogActions>
       </Dialog>
 
