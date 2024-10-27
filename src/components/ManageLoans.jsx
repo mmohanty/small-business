@@ -188,13 +188,19 @@ const ManageLoans = ({ isDrawerOpen }) => {
       [fieldKey]: value,
     }));
   };
-  const exportToCSV = (selectedColumns) => {
-    const filteredRows = rows.map(row => 
-      selectedColumns.reduce((acc, field) => {
-        acc[field] = row[field];
-        return acc;
-      }, {})
-    );
+  const handleDownloadTemplateHeaders = (template) => {
+    // Extract field names as headers
+    const headers = Object.keys(template.fields);
+
+    // Create CSV content with headers only
+    const csvContent = headers.join(',') + '\n';
+
+    // Create a Blob from the CSV content
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+    // Trigger the download of the CSV file
+    saveAs(blob, 'sample-loan-template.csv');
+  };
 
 
   const CustomToolbar = () => (
